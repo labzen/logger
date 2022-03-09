@@ -1,7 +1,7 @@
 ![LOGO](http://r7jiu5wkl.hd-bkt.clouddn.com/images/2022/02/19/16-34-57-167.png)
 # Labzen Logger
 
-![Labzen Dependencies](https://img.shields.io/badge/Labzen-Logger-green)
+![Labzen Logger](https://img.shields.io/badge/Labzen-Logger-green)
 ![Maven Central](https://img.shields.io/maven-central/v/cn.labzen/logger)
 ![GitHub](https://img.shields.io/github/license/labzen/logger)
 
@@ -90,29 +90,6 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
   <version>${latest_version}</version>
 </dependency>
 ```
-
-找不拙？
-
-```xml
-
-<repositories>
-  <repository>
-    <id>tgk12</id>
-    <url>http://nexus.tgk12.cn/repository/tgk12/</url>
-    <releases>
-      <enabled>true</enabled>
-      <checksumPolicy>fail</checksumPolicy>
-    </releases>
-    <snapshots>
-      <enabled>true</enabled>
-      <checksumPolicy>fail</checksumPolicy>
-      <updatePolicy>always</updatePolicy>
-    </snapshots>
-  </repository>
-</repositories>
-```
-
-这个加了哞？
 
 ## Usage
 

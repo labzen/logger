@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<body>
+  <app>logger</app>
+  <log>
+    <function>enhance</function>
+    <version>1</version>
+    <levels>trace</levels>
+    <levels>debug</levels>
+    <levels>info</levels>
+    <levels>warn</levels>
+    <levels>error</levels>
+  </log>
+</body>

@@ -1,4 +1,5 @@
 ![LOGO](http://r7jiu5wkl.hd-bkt.clouddn.com/images/2022/02/19/16-34-57-167.png)
+
 # Labzen Logger
 
 ![Labzen Logger](https://img.shields.io/badge/Labzen-Logger-green)
@@ -7,7 +8,6 @@
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/labzen/logger)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/labzen/logger)
-
 
 Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超强，超强，超超强！）
 
@@ -35,6 +35,7 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 再但是，具备中华优良传统的团伙作案，应该考虑到...... 逼格问题！那么`cn.labzen:logger`就很有看头了（您拿这框架当装逼指南都成！）
 
 ## Ideas
+
 基于此，解决思路大致如下：
 
 > 1. First of all，要解决各路神仙产出的内容风格迥异，这个灰常滴..........难，我只能说尽全力吧（之后我会结合着 idea 的 plugin 来尽量解决）
@@ -50,35 +51,38 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 > 11. 思路有点儿跳跃模糊
 
 ## Features
+
 目前可预见的功能包括
 
- 1. 基于 SLF4j, Logback 实现增强
- 2兼容kotlin的使用
- 2. 日志记录函数中，将异常参数（throwable）提升至第一位，这个要改改习惯了哦
- 3. 日志记录函数的参数，支持lambda函数
- 4. 提供Pipeline方式记录日志（类似SLF4j 2.x版本的使用）
- 5. Pipeline中，提供
-  - 根据参数选择性打印 - decide()
-  - 强制打印，忽略日志界别 - force() （暂不实现）
-  - 延迟打印 - wait() （暂不实现）
-  - 日志标签 - tag()
-  - 场景标识 - scene()
-  - 日志计数 - counting() （暂不实现）
-  - 日志阶段性打印 - phaseStart(), phasePause(), phaseEnd()（暂不实现）
-  - 打印JSON，XML - logJson(), logXml()
-  - 打印异常 - logError()
-  - 打印普通日志（增强） - log(), logCalculated(), logArguments()
- 7. 通过Pipeline打印的日志，日志格式更加丰富，并扩展placeholder - "{}"，可增加更多的功能，每个功能成为Tile
- - tile对数字参数进行格式化 - {@number_}，例如参数 int x = 1, {@number_0.0}, 输出"1.0"
- - tile对日期参数进行格式化 - {@date_}，例如参数 LocalDate x = LocalDate.now(), {@date_yyyy-MM}, 输出"2021-03"
- - tile对参数进行字符包裹 - {@wrap_}，例如参数 String x = "123", {@wrap\_<>}, 输出"<123>"
- - tile对参数进行是非判断输出 - {@whether_,}，例如参数 boolean x = true, {@whether_yes,no}, 输出"yes"
- - tile控制参数的字符显示宽度 - {@width_}，例如参数 String x = "123", {@width_5}, 输出"123  "
- 8. Pipeline功能使用placeholder时，可出现多个tile组合使用，例如 boolean x = flase, {@whether_yes,no@wrap_()@width_5}, 输出"(no) "
- 9. ** 使用SPI对日志增强进行配置
- 10. ** 支持自动化链路追踪支撑
- 11. ** 支持使用redis或kafka，做日志收集支撑
+1. 基于 SLF4j, Logback 实现增强 2兼容kotlin的使用
+2. 日志记录函数中，将异常参数（throwable）提升至第一位，这个要改改习惯了哦
+3. 日志记录函数的参数，支持lambda函数
+4. 提供Pipeline方式记录日志（类似SLF4j 2.x版本的使用）
+5. Pipeline中，提供
 
+- 根据参数选择性打印 - decide()
+- 强制打印，忽略日志界别 - force() （暂不实现）
+- 延迟打印 - wait() （暂不实现）
+- 日志标签 - tag()
+- 场景标识 - scene()
+- 日志计数 - counting() （暂不实现）
+- 日志阶段性打印 - phaseStart(), phasePause(), phaseEnd()（暂不实现）
+- 打印JSON，XML - logJson(), logXml()
+- 打印异常 - logError()
+- 打印普通日志（增强） - log(), logCalculated(), logArguments()
+
+7. 通过Pipeline打印的日志，日志格式更加丰富，并扩展placeholder - "{}"，可增加更多的功能，每个功能成为Tile
+
+- tile对数字参数进行格式化 - {@number_}，例如参数 int x = 1, {@number_0.0}, 输出"1.0"
+- tile对日期参数进行格式化 - {@date_}，例如参数 LocalDate x = LocalDate.now(), {@date_yyyy-MM}, 输出"2021-03"
+- tile对参数进行字符包裹 - {@wrap_}，例如参数 String x = "123", {@wrap\_<>}, 输出"<123>"
+- tile对参数进行是非判断输出 - {@whether_,}，例如参数 boolean x = true, {@whether_yes,no}, 输出"yes"
+- tile控制参数的字符显示宽度 - {@width_}，例如参数 String x = "123", {@width_5}, 输出"123  "
+
+8. Pipeline功能使用placeholder时，可出现多个tile组合使用，例如 boolean x = flase, {@whether_yes,no@wrap_()@width_5}, 输出"(no) "
+9. ** 使用SPI对日志增强进行配置
+10. ** 支持自动化链路追踪支撑
+11. ** 支持使用redis或kafka，做日志收集支撑
 
 ## Installation
 
@@ -100,6 +104,7 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 再写吧，下班了
 
 ## 备注
+
 当前版本，基于 Slf4j 1.7.36 + Logback 1.2.10，借用 logback classic 的 ContextSelector 实现 LoggerFactory 实例的获取切入。
 
 后续版本，将基于 Slf4j 2.0 + Logback 1.3.x / Log4j 1.2.x ；基于 ServiceLoader 的 SLF4JServiceProvider 类来实现LoggerFactory 实例的获取切入。

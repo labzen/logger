@@ -1,0 +1,14 @@
+{
+  "app": "logger",
+  "log": {
+    "function": "enhance",
+    "version": 1.0,
+    "levels": [
+      "trace",
+      "debug",
+      "info",
+      "warn",
+      "error"
+    ]
+  }
+}

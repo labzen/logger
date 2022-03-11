@@ -17,28 +17,28 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 
 程序猿们不论使用什么样的日志框架（哦，对！还有就是你们的口味真的难以统一），都不可避免的存在下边几个问题：
 
-> 1. 各路神仙的日志输出内容风格不统一
-> 2. 个别谁谁谁，十分喜欢用`System.out.println()`，习惯了！但谁说这个不叫日志呢
-> 3. 不管日志重要与否，可劲儿的往外打，还没有意识对内容区分级别，一般都统一用info（或者把这种行为理解为，其不知道该以什么级别输出合适？）
-> 4. 超长日志的存在（这就逆天了），例如打印个图片base64字符串、json字符串什么的（你开发自己看两眼也就算了，都上生产了还不现出原形），这样日志我真不爱下眼瞧，更不用说那不怎么贵的磁盘空间了
+> 1. 各路神仙的日志输出，内容的风格不统一，还有那种随心所欲的~
+> 2. 个别那个谁谁谁，十分喜欢用`System.out.println()`，老八辈儿习惯了！但谁说这个不叫日志呢
+> 3. 不管日志重要与否，可劲儿的往外打就完了！并没有意识要对日志内容进行级别区分，统一用info级别（或者可以把这种行为理解为，不知道该以什么级别输出合适？）
+> 4. 超长日志的存在（这种逆天操作还挺常见的）。例如打印个图片base64字符串、json字符串什么的（你开发自己看两眼也就算了，都上生产了还不现出原形），这样日志我真不爱下眼瞧，更不用说那不怎么贵的磁盘空间了
 > 5. MDC和Maker功能永远没有出头之日了，当然！这也无所谓了
 > 6. 日志文件太TM大了，老是download也不是个事儿，毕竟有时候就为了看那么一两行关键内容，大几百兆的下载啊，真有功夫啊
-> 7. 还有......谁知道都打出来些什么玩意儿？日志的前后关系是啥？所处环境条件是啥？啥都没有，还说个P
+> 7. 还有......就算是自己的代码，看日志的时候，也TM不一定知道打出来的些什么玩意儿~！当时打日志的前后关系是啥？所处环境条件是啥？啥都没有，还打个P
 > 8. 有时候，在某些条件下不想让他打出来可咋整，用if判断？格局小了哈
-> 9. 不用说不同的项目，同一个项目输出风格都不团结，就不用往多了说。别往外说是一个团队做出来的事儿哈，太low
+> 9. 不用说在不同的项目下了，就连同一个项目中输出风格都不团结，就不用往多了说。别往外说是一个团队做出来的事儿哈，太low
 > 10. 不撸了，肯定还有乱七八糟的其他事儿
 
-上边说的这些个，要碰见个爱较真儿的，那肯定就开腔了，一直这么用的挺好的啊！也能解决问题啊！！不就是看日志么，能看懂不就行了么，再说只有开发测试时看，生产上要是不出问题，谁看？？
+上边说的这些个，要碰见个爱较真儿的，那肯定就开腔了：一直这么用的挺好的啊！也能解决问题啊！！不就是看日志么，能看懂不就行了么，再说只有开发测试时看，生产上要是不出问题，谁看？？
 
-但叫我说，这么硬刚还真TMD没毛病！退下了便是~ 不爱用拉JB倒
+但叫我说，这么硬刚还真TMD没毛病！出门左转不送~ 不爱用拉JB倒
 
-再但是，具备中华优良传统的团伙作案，应该考虑到...... 逼格问题！那么`cn.labzen:logger`就很有看头了（您拿这框架当装逼指南都成！）
+再但是，具备中华优良传统的团伙作案，应该考虑到...... 逼格问题！那么`cn.labzen:logger`就很有看头了（您拿这框架当装逼指南就成！）
 
 ## Ideas
 
-基于此，解决思路大致如下：
+基于上述痒点，解决思路大致如下：
 
-> 1. First of all，要解决各路神仙产出的内容风格迥异，这个灰常滴..........难，我只能说尽全力吧（之后我会结合着 idea 的 plugin 来尽量解决）
+> 1. Firstly，要解决各路神仙产出的内容风格迥异，这个灰常滴..........难，我只能说尽全力吧（之后我会尝试结合着 idea 的 plugin 来尽量解决）
 > 2. `System.out.println()`这个事儿，谁爱忍谁忍，反正老子忍不了，碰到直接枪毙（也交起idea plugin了）
 > 3. 日志的级别、重要程度啥的，有思路解决（不过还是要靠广大人民群众提高觉悟），而且日志贼拉好看（有点儿吹过头了）
 > 4. 过长的日志，打印出来真的有意义么？看的完么？提供个机制，给你缩略个摘要看下得了
@@ -52,37 +52,52 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 
 ## Features
 
-目前可预见的功能包括
+目前已实现的功能包括
 
-1. 基于 SLF4j, Logback 实现增强 2兼容kotlin的使用
-2. 日志记录函数中，将异常参数（throwable）提升至第一位，这个要改改习惯了哦
-3. 日志记录函数的参数，支持lambda函数
-4. 提供Pipeline方式记录日志（类似SLF4j 2.x版本的使用）
-5. Pipeline中，提供
+1. 基于 SLF4j 1.7.x + Logback 1.2.x 实现
+2. 兼容kotlin的使用，`val logger = logger {}`
+3. SLF4j Logger 接口的实现类`EnhancedLogger`增加了几个与异常相关的记录方法，并将异常参数（throwable）放至第一位
+4. 增加`PipedLogger`实现类似 SLF4j 2.x 中的 [fluent logging API](https://www.slf4j.org/manual.html#fluent)
+   的日志记录方式
+5. 通过`EnhancedLogger`获取`PipedLogger`，并提供了如下方法：
+    1. `decide(boolean)`: 可根据布尔值控制日志是否打印
+    2. `tag(string..)`: 对日志标注（多个）标签
+    3. `scene(enum)`: 标记当前日志的场景，场景为预定义的枚举类型，例如：SUCCESS, COMPLETE, IMPORTANT, TODO 等
+    4. `logJson(), logXml()`: 打印JSON或XML（带有格式化），方便查看
+    5. `log(), logArguments(), logCalculated(), logError()`: 普通日志（增强）打印、异常
+6. 通过`PipedLogger`打印的日志，可使用 SLF4j 传统的`{}` 占位符，来打印参数值；另外扩展了多个占位符 "{@xxx}"，可增加更多的功能。在这里，每个占位符功能被称为`Tile`
+    1. `{@number_}`: 对数字参数进行格式化，可接受整数、浮点数类型，下划线后接格式化pattern，pattern规则参考`DecimalFormat`类。例如：定义参数`int x = 1`，
+       `logArguments(“number is {@number_0.0}”, x)`，日志输出`number is 1.0`
+    2. `{@date_}`: 对日期时间参数进行格式化，可接受`LocalDate, LocalTime, LocalDateTime, Date`等类型，下划线后跟日期时间格式化字符串。例如：定义参数
+       `LocalDate x = LocalDate.now()`，`logArguments(“现在是{@date_yyyy年MM月}”, x)`，日志输出`现在是2022年03月`
+    3. `{@wrap_}`：对参数值进行字符串包裹，下划线后必须跟2个字符，分别为包裹的前缀与后缀字符。例如：定义参数`double x = 12.34`，
+       `logArguments(“important: {@wrap_[]}”, x)`，日志输出`important: [12.34]`
+    5. `{@whether_}`：判断输出，对boolean类型的参数进行预定义输出，下划线后跟两个字符串，使用英文逗号分隔，参数为true时，输出第一个字符串，否则输出另一个。例如：
+       定义参数`boolean completed = true`，`logArguments(“job is done: {@whether_yes,no}”, completed)`，日志输出`job is done: yes`
+    6. `{@width_}`：控制参数的显示宽度，下划线后最多可跟两个正整数宽度，用英文逗号分隔。第一个数字代表最小位宽，第二个数字代表最大位宽（可忽略）。
+       例如：定义参数`String str = "content"`。`logArguments(“fixed width string: '{@width_8}'.”, str)`，
+       日志输出`fixed width string: 'content '.`；`logArguments(“fixed width string: '{@width_0,4}'.”, str)`，
+       日志输出`fixed width string: 'cont'.`；
+7. `PipedLogger`使用占位符功能时，可出现多个`Tile`组合使用。例如：
+   `logArguments("r u ready? : '{@whether_yes,no@wrap_()@width_5}'", false)`，日志输出`r u ready? : '(no) '`
+   `logArguments("r u ready? : '{@whether_yes,no@wrap_()@width_5}'", true)`，日志输出`r u ready? : '(yes)'`
 
-- 根据参数选择性打印 - decide()
-- 强制打印，忽略日志界别 - force() （暂不实现）
-- 延迟打印 - wait() （暂不实现）
-- 日志标签 - tag()
-- 场景标识 - scene()
-- 日志计数 - counting() （暂不实现）
-- 日志阶段性打印 - phaseStart(), phasePause(), phaseEnd()（暂不实现）
-- 打印JSON，XML - logJson(), logXml()
-- 打印异常 - logError()
-- 打印普通日志（增强） - log(), logCalculated(), logArguments()
+## TODO
 
-7. 通过Pipeline打印的日志，日志格式更加丰富，并扩展placeholder - "{}"，可增加更多的功能，每个功能成为Tile
+在 `PipedLogger` 中实现如下功能：
 
-- tile对数字参数进行格式化 - {@number_}，例如参数 int x = 1, {@number_0.0}, 输出"1.0"
-- tile对日期参数进行格式化 - {@date_}，例如参数 LocalDate x = LocalDate.now(), {@date_yyyy-MM}, 输出"2021-03"
-- tile对参数进行字符包裹 - {@wrap_}，例如参数 String x = "123", {@wrap\_<>}, 输出"<123>"
-- tile对参数进行是非判断输出 - {@whether_,}，例如参数 boolean x = true, {@whether_yes,no}, 输出"yes"
-- tile控制参数的字符显示宽度 - {@width_}，例如参数 String x = "123", {@width_5}, 输出"123  "
+1. `force(boolean)`: 是否强制打印日志，即忽略本条日志所指定的级别是否允许打印，例如日志为debug级别，但当前环境的打印级别为warn，当参数为true时，级别不变日志也能打印出来（带有特殊标识，加以区分）
+2. `wait(func)`: 延迟打印，等待参数指定的匿名函数执行完成后，再打印日志
+3. `counting()`: 对日志计数，使用后，本条日志的打印将会计数，可简化通过日志调试程序的场景
+4. `phaseStart(), phasePause(), phaseEnd()`: 阶段性日志，可针对一次业务处理流程，分不同的阶段打印日志，并统计执行时长
 
-8. Pipeline功能使用placeholder时，可出现多个tile组合使用，例如 boolean x = flase, {@whether_yes,no@wrap_()@width_5}, 输出"(no) "
-9. ** 使用SPI对日志增强进行配置
-10. ** 支持自动化链路追踪支撑
-11. ** 支持使用redis或kafka，做日志收集支撑
+针对日志使用中的一些规则，进行基于Java Code的灵活配置
+
+考虑加入对自动化链路追踪的功能支撑
+
+支持能以最低的代码配置，使用Redis或Kafka自动收集日志
+
+开发IDEA的插件，支持JSR269，自动注入logger
 
 ## Installation
 
@@ -97,11 +112,61 @@ Labzen Logger 基于SLF4j接口与Logback实现，做的日志增强组件（超
 
 ## Usage
 
-先欠着吧哈，用起来很简单，自己试试
+### 传统获取Logger方式
 
-## Roadmap
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-再写吧，下班了
+// 也可以使用Lombok的@Slf4j注解，效果是一样的
+public class SimpleBizClass {
+
+  private static Logger logger = LoggerFactory.getLogger(SimpleBizClass.class);
+
+  public void someFunction() {
+    // 日志输出内容为：logger的实现类为 : class cn.labzen.logger.core.EnhancedLogger
+    logger.info("logger的实现类为 : {}", logger.getClass());
+  }
+}
+```
+不管使用Lombok还是使用LoggerFactory获取到的都是SLF4j的Logger接口。所以只能使用基本功能。
+
+Logger接口的实现类是`EnhancedLogger`，所以可以强转类型，以使用更多的功能。
+```java
+EnhancedLogger enhancedLogger = (EnhancedLogger) logger;
+// 使用PipedLogger的功能，根据不同的Level获取
+PipedLogger pipedLogger = enhancedLogger.info();
+```
+
+### 通过Labzen Logger的方式
+
+```java
+import cn.labzen.logger.Loggers;
+import cn.labzen.logger.core.EnhancedLogger;
+
+public class SimpleBizClass {
+
+  private static EnhancedLogger logger = Loggers.getLogger(SimpleBizClass.class);
+
+  public void someFunction() {
+    logger.info().logArguments("{@number_0.00}", 1.2);
+  }
+}
+```
+
+搭配IDEA的插件，也可以类似Lombok的使用方式
+
+```java
+import cn.labzen.logger.annotation.Logging;
+
+@Logging
+public class SimpleBizClass {
+
+  public void someFunction() {
+    logger.info().logArguments("{@number_0.00}", 1.2);
+  }
+}
+```
 
 ## 备注
 

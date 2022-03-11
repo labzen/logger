@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Logger
 import cn.labzen.logger.core.marker.CodeMarker
 import cn.labzen.logger.core.marker.MarkerWrapper
 import cn.labzen.logger.core.marker.TagMarker
+import org.slf4j.Marker
 import org.slf4j.event.Level
 import java.util.function.Supplier
 
@@ -83,109 +84,7 @@ class PipedLogger(private val logger: Logger, private val level: Level) {
     return this
   }
 
-  /**
-   * 按JSON的既定格式输出（不提供格式化），无法向[log]方法那样定制格式
-   */
-  @JvmOverloads
-  fun logJson(msg: String? = null, json: String) {
-    if (decided == false) {
-      return
-    }
-
-    val marker = MarkerWrapper(
-      this.scene?.marker,
-      this.tags?.let { TagMarker(it) },
-      CodeMarker(CodeMarker.CodeType.JSON, json)
-    )
-    when (level) {
-      Level.TRACE -> if (logger.isTraceEnabled) {
-        logger.trace(marker, msg)
-      }
-      Level.DEBUG -> if (logger.isDebugEnabled) {
-        logger.debug(marker, msg)
-      }
-      Level.INFO -> if (logger.isInfoEnabled) {
-        logger.info(marker, msg)
-      }
-      Level.WARN -> if (logger.isWarnEnabled) {
-        logger.warn(marker, msg)
-      }
-      Level.ERROR -> if (logger.isErrorEnabled) {
-        logger.error(marker, msg)
-      }
-    }
-  }
-
-  /**
-   * 按XML的既定格式输出（不提供格式化），无法向[log]方法那样定制格式
-   */
-  @JvmOverloads
-  fun logXml(msg: String? = null, xml: String) {
-    if (decided == false) {
-      return
-    }
-
-    val marker = MarkerWrapper(
-      this.scene?.marker,
-      this.tags?.let { TagMarker(it) },
-      CodeMarker(CodeMarker.CodeType.XML, xml)
-    )
-    when (level) {
-      Level.TRACE -> if (logger.isTraceEnabled) {
-        logger.trace(marker, msg)
-      }
-      Level.DEBUG -> if (logger.isDebugEnabled) {
-        logger.debug(marker, msg)
-      }
-      Level.INFO -> if (logger.isInfoEnabled) {
-        logger.info(marker, msg)
-      }
-      Level.WARN -> if (logger.isWarnEnabled) {
-        logger.warn(marker, msg)
-      }
-      Level.ERROR -> if (logger.isErrorEnabled) {
-        logger.error(marker, msg)
-      }
-    }
-  }
-
-  /**
-   * 打印日志文本
-   */
-  fun log(msg: String) {
-    if (decided == false) {
-      return
-    }
-
-    val marker = MarkerWrapper(this.scene?.marker, this.tags?.let { TagMarker(it) })
-    when (level) {
-      Level.TRACE -> if (logger.isTraceEnabled) {
-        logger.trace(marker, msg)
-      }
-      Level.DEBUG -> if (logger.isDebugEnabled) {
-        logger.debug(marker, msg)
-      }
-      Level.INFO -> if (logger.isInfoEnabled) {
-        logger.info(marker, msg)
-      }
-      Level.WARN -> if (logger.isWarnEnabled) {
-        logger.warn(marker, msg)
-      }
-      Level.ERROR -> if (logger.isErrorEnabled) {
-        logger.error(marker, msg)
-      }
-    }
-  }
-
-  /**
-   * 打印异常日志
-   */
-  fun logError(throwable: Throwable, msg: String) {
-    if (decided == false) {
-      return
-    }
-
-    val marker = MarkerWrapper(this.scene?.marker, this.tags?.let { TagMarker(it) })
+  private fun logMsg(marker: Marker, msg: String?, throwable: Throwable?) {
     when (level) {
       Level.TRACE -> if (logger.isTraceEnabled) {
         logger.trace(marker, msg, throwable)
@@ -203,6 +102,64 @@ class PipedLogger(private val logger: Logger, private val level: Level) {
         logger.error(marker, msg, throwable)
       }
     }
+  }
+
+  /**
+   * 按JSON的既定格式输出（不提供格式化），无法向[log]方法那样定制格式
+   */
+  @JvmOverloads
+  fun logJson(msg: String? = null, json: String) {
+    if (decided == false) {
+      return
+    }
+
+    val marker = MarkerWrapper(
+      this.scene?.marker,
+      this.tags?.let { TagMarker(it) },
+      CodeMarker(CodeMarker.CodeType.JSON, json)
+    )
+    logMsg(marker, msg, null)
+  }
+
+  /**
+   * 按XML的既定格式输出（不提供格式化），无法向[log]方法那样定制格式
+   */
+  @JvmOverloads
+  fun logXml(msg: String? = null, xml: String) {
+    if (decided == false) {
+      return
+    }
+
+    val marker = MarkerWrapper(
+      this.scene?.marker,
+      this.tags?.let { TagMarker(it) },
+      CodeMarker(CodeMarker.CodeType.XML, xml)
+    )
+    logMsg(marker, msg, null)
+  }
+
+  /**
+   * 打印日志文本
+   */
+  fun log(msg: String) {
+    if (decided == false) {
+      return
+    }
+
+    val marker = MarkerWrapper(this.scene?.marker, this.tags?.let { TagMarker(it) })
+    logMsg(marker, msg, null)
+  }
+
+  /**
+   * 打印异常日志
+   */
+  fun logError(throwable: Throwable, msg: String) {
+    if (decided == false) {
+      return
+    }
+
+    val marker = MarkerWrapper(this.scene?.marker, this.tags?.let { TagMarker(it) })
+    logMsg(marker, msg, throwable)
   }
 
   /**
@@ -244,24 +201,7 @@ class PipedLogger(private val logger: Logger, private val level: Level) {
 
     val args = supplier.get()
 
-    val marker = MarkerWrapper(this.scene?.marker, this.tags?.let { TagMarker(it) })
-    when (level) {
-      Level.TRACE -> if (logger.isTraceEnabled) {
-        logger.trace(marker, msgWithPattern, args)
-      }
-      Level.DEBUG -> if (logger.isDebugEnabled) {
-        logger.debug(marker, msgWithPattern, args)
-      }
-      Level.INFO -> if (logger.isInfoEnabled) {
-        logger.info(marker, msgWithPattern, args)
-      }
-      Level.WARN -> if (logger.isWarnEnabled) {
-        logger.warn(marker, msgWithPattern, args)
-      }
-      Level.ERROR -> if (logger.isErrorEnabled) {
-        logger.error(marker, msgWithPattern, args)
-      }
-    }
+    logArguments(msgWithPattern, args)
   }
 
   /**

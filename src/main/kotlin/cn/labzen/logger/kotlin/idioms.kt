@@ -3,11 +3,11 @@ package cn.labzen.logger.kotlin
 import cn.labzen.logger.Loggers
 import java.lang.reflect.Modifier
 
-fun get(func: () -> Unit) = Loggers.getLogger(namingFunc(func))
+fun logger(func: () -> Unit) = Loggers.getLogger(namingFunc(func))
 
-fun get(classType: Class<*>) = Loggers.getLogger(namingType(classType))
+fun logger(classType: Class<*>) = Loggers.getLogger(namingType(classType))
 
-fun get(className: String) = Loggers.getLogger(className)
+fun logger(className: String) = Loggers.getLogger(className)
 
 private fun namingFunc(func: () -> Unit): String {
   val name = func.javaClass.name

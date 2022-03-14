@@ -21,7 +21,7 @@ class ProxiedContextSelector(context: LoggerContext) : ContextSelector {
 
   override fun getLoggerContext(name: String): LoggerContext? =
     if (defaultLoggerContext.name.equals(name)) {
-      defaultLoggerContext;
+      defaultLoggerContext
     } else {
       null
     }

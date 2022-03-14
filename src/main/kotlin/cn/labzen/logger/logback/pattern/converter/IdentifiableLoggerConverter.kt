@@ -55,7 +55,6 @@ class IdentifiableLoggerConverter : ClassicConverter() {
       it.className == event.loggerName
     }?.let { "(${it.fileName}:${it.lineNumber})" } ?: event.loggerName.substringAfterLast('.')
 
-
   companion object {
     // TODO 丰富各jar包的路径，通过SPI？
     private val packages = mutableMapOf<String, String>().apply {

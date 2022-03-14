@@ -239,7 +239,6 @@ internal constructor(private val principal: ch.qos.logback.classic.Logger) :
     principal.error(MessageFormatter.arrayFormat(msgPattern, args).message, throwable)
   }
 
-
   // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> FLUENT API >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   // pipe functions
 

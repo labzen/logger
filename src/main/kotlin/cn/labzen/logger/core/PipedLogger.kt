@@ -14,7 +14,6 @@ class PipedLogger(private val logger: Logger, private val level: Level) {
   private var scene: Scene? = null
   private var tags: List<String>? = null
 
-
   /**
    * 强制打印日志，忽略日志级别
    *

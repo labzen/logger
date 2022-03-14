@@ -20,7 +20,8 @@ class PipelineMessageConverter : ClassicConverter() {
       """${event.message ?: ""}
   $FRAME_LINE_START_PREFIX${cm.type}$FRAME_LINE_START_SUFFIX
   $FRAME_PREFIX$it
-  $FRAME_LINE_END"""
+  $FRAME_LINE_END
+      """
     }
 
   private fun formattedCodeMessage(msg: String) =

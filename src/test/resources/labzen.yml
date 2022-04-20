@@ -1,0 +1,4 @@
+labzen:
+  logger:
+    level:
+      root: info

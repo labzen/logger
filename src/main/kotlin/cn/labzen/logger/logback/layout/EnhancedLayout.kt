@@ -1,7 +1,7 @@
 package cn.labzen.logger.logback.layout
 
 import ch.qos.logback.classic.PatternLayout
-import cn.labzen.logger.config.DEFAULT_PATTERN
+import cn.labzen.logger.config.LabzenLoggerConfiguration
 import cn.labzen.logger.logback.pattern.converter.*
 import cn.labzen.logger.logback.pattern.converter.processor.EnsureCustomizeExceptionHandling
 
@@ -15,7 +15,7 @@ class EnhancedLayout : PatternLayout() {
     defaultConverterMap["x_message"] = PipelineMessageConverter::class.java.name
 
     this.setPostCompileProcessor(EnsureCustomizeExceptionHandling())
-    this.pattern = DEFAULT_PATTERN
+    this.pattern = LabzenLoggerConfiguration.instance.pattern
     super.start()
   }
 }

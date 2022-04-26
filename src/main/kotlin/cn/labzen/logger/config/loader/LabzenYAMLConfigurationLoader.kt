@@ -3,8 +3,8 @@ package cn.labzen.logger.config.loader
 import cn.labzen.logger.config.ConfigurationLoader
 import cn.labzen.logger.config.LabzenLoggerConfiguration
 import org.yaml.snakeyaml.Yaml
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.net.JarURLConnection
+import java.util.*
 
 
 internal class LabzenYAMLConfigurationLoader : ConfigurationLoader {
@@ -12,10 +12,28 @@ internal class LabzenYAMLConfigurationLoader : ConfigurationLoader {
   private val yaml = Yaml()
 
   override fun load(): LabzenLoggerConfiguration? {
-    val resource = this.javaClass.classLoader.getResource("labzen.yml")
-    resource ?: return null
+    val resource = this.javaClass.classLoader.getResource("labzen.yml") ?: return null
+    val openedConnection = resource.openConnection()
+    val isJarFile = openedConnection is JarURLConnection
 
-    val yamlString = Files.readString(Paths.get(resource.toURI()))
+    val yamlString = if (isJarFile) {
+      val jarFile = (openedConnection as JarURLConnection).jarFile
+      val labzenFile = jarFile.getJarEntry("labzen.yml")
+
+      val data = ByteArray(labzenFile.size.toInt())
+      jarFile.getInputStream(labzenFile).use { `is` ->
+        `is`.read(data)
+        String(data)
+      }
+    } else {
+      openedConnection.getInputStream().use { `is` ->
+        Scanner(`is`).use { scanner ->
+          scanner.useDelimiter("\\A")
+          scanner.next()
+        }
+      }
+    } ?: return null
+
     val fragments: Iterable<Any> = yaml.loadAll(yamlString)
 
     return fragments.firstNotNullOfOrNull(::loadFromFragment)

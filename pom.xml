@@ -81,6 +81,16 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>cn.labzen</groupId>
+        <artifactId>meta</artifactId>
+        <version>1.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -89,6 +99,11 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>cn.labzen</groupId>
+      <artifactId>meta</artifactId>
     </dependency>
 
     <dependency>

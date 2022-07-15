@@ -5,6 +5,10 @@ import ch.qos.logback.classic.pattern.ClassNameOnlyAbbreviator
 import ch.qos.logback.classic.pattern.ClassicConverter
 import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator
 import ch.qos.logback.classic.spi.ILoggingEvent
+import cn.labzen.meta.Labzens
+import java.io.IOException
+import java.io.InputStream
+import java.util.*
 
 class IdentifiableLoggerConverter : ClassicConverter() {
 
@@ -38,14 +42,14 @@ class IdentifiableLoggerConverter : ClassicConverter() {
     }
 
   private fun loggerText(loggerName: String): String? {
-    // TODO 如果使用indexOf+substring代替split+take(i)，性能是否会提高？
-    val parts = loggerName.split('.')
+    // val parts = loggerName.split('.')
 
-    for (i in parts.size - 1 downTo 0) {
-      val subPackage = parts.take(i).joinToString(".")
-      if (packages.containsKey(subPackage)) {
-        return packages[subPackage]
+    var pn = loggerName.dropLastWhile { it != '.' }.dropLast(1)
+    while (pn.isNotEmpty()) {
+      if (packages.containsKey(pn)) {
+        return packages[pn]
       }
+      pn = pn.dropLastWhile { it != '.' }.dropLast(1)
     }
     return null
   }
@@ -56,15 +60,36 @@ class IdentifiableLoggerConverter : ClassicConverter() {
     }?.let { "(${it.fileName}:${it.lineNumber})" } ?: event.loggerName.substringAfterLast('.')
 
   companion object {
-    // TODO 丰富各jar包的路径，通过SPI？
-    private val packages = mutableMapOf<String, String>().apply {
-      this["cn.labzen.cells.core"] = "Labzen-Cells.Core@"
-      this["cn.labzen.cells.network"] = "Labzen-Cells.Network@"
-      this["cn.labzen.cells.algorithm"] = "Labzen-Cells.Algorithm@"
-      this["cn.labzen.logger"] = "Labzen-Logger@"
+    private const val LOGGER_NAMES_PROPERTIES_FILE = "logger-names.properties"
+    private val packages = preparePackages()
 
-      this["org.springframework.boot"] = "SpringBoot@"
-      this["org.springframework.boot.actuate"] = "SpringBoot-Actuate@"
-    }.toMap()
+    private fun preparePackages(): MutableMap<String, String> {
+      val resource: InputStream? = Companion::class.java.classLoader.getResource(LOGGER_NAMES_PROPERTIES_FILE)?.let {
+        try {
+          it.openStream()
+        } catch (e: IOException) {
+          null
+        }
+      } ?: Companion::class.java.getResourceAsStream(LOGGER_NAMES_PROPERTIES_FILE)
+
+      resource ?: return packages
+
+      val properties = Properties().apply {
+        load(resource)
+      }
+      val packages = mutableMapOf<String, String>()
+      properties.stringPropertyNames().forEach {
+        packages[it] = properties.getProperty(it)
+      }
+
+      return packages
+    }
+
+    internal fun collectLabzenComponentPackages() {
+      val componentPackages = Labzens.components().values.associate {
+        Pair(it.meta.instance.packageBased(), it.meta.instance.mark() + "@")
+      }
+      packages.putAll(componentPackages)
+    }
   }
 }

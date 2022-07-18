@@ -7,7 +7,7 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>cn.labzen</groupId>
-    <version>11.4</version>
+    <version>11.5</version>
     <relativePath/>
   </parent>
 
@@ -61,7 +61,7 @@
       <dependency>
         <groupId>cn.labzen</groupId>
         <artifactId>meta</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -84,6 +84,10 @@
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>

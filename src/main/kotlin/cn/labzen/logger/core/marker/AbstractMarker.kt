@@ -4,6 +4,7 @@ import org.slf4j.Marker
 
 abstract class AbstractMarker : Marker {
 
+  @Deprecated("Deprecated in Java", ReplaceWith("false"))
   override fun hasChildren(): Boolean = false
 
   override fun hasReferences(): Boolean = false

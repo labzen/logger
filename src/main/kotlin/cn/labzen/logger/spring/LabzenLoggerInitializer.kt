@@ -1,6 +1,6 @@
 package cn.labzen.logger.spring
 
-import cn.labzen.logger.logback.pattern.converter.IdentifiableLoggerConverter
+import cn.labzen.logger.logback.pattern.conversion.IdentifiableLoggerConverter
 import cn.labzen.logger.meta.LabzenMetaPrinter
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext

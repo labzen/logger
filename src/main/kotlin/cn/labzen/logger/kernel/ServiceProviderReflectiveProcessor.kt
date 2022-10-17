@@ -17,6 +17,7 @@ internal object ServiceProviderReflectiveProcessor {
     disableWarning()
 
     processLogback()
+    processReload4j()
   }
 
   private fun processLogback() {
@@ -34,16 +35,36 @@ internal object ServiceProviderReflectiveProcessor {
     providerClass.addField(loggerContextField)
 
     val initializeMethod = providerClass.getDeclaredMethod("initialize")
-    initializeMethod.insertAt(
-      40,
-      "labzenLoggerContext = new cn.labzen.logger.logback.LabzenLogbackLoggerContext(defaultLoggerContext);"
-    )
+    initializeMethod.insertBefore("cn.labzen.logger.logback.LogbackPreprocessor.process();")
+    initializeMethod.insertAfter("labzenLoggerContext = new cn.labzen.logger.logback.LabzenLogbackLoggerContext(defaultLoggerContext);")
 
     val getLoggerFactoryMethod = providerClass.getDeclaredMethod("getLoggerFactory")
     getLoggerFactoryMethod.setBody("return labzenLoggerContext;")
 
     providerClass.toClass()
-    providerClass.writeFile()
+  }
+
+  private fun processReload4j() {
+    val pool = ClassPool.getDefault()
+
+    val providerClass = try {
+      pool.get("org.slf4j.reload4j.Reload4jServiceProvider")
+    } catch (e: NotFoundException) {
+      return
+    }
+
+    val loggerFactoryClass = pool.get("cn.labzen.logger.reload4j.LabzenReload4jLoggerFactory")
+    val loggerFactoryField = CtField(loggerFactoryClass, "labzenLoggerFactory", providerClass)
+    loggerFactoryField.modifiers = Modifier.PRIVATE
+    providerClass.addField(loggerFactoryField)
+
+    val initializeMethod = providerClass.getDeclaredMethod("initialize")
+    initializeMethod.insertAfter("labzenLoggerFactory = new cn.labzen.logger.reload4j.LabzenReload4jLoggerFactory(loggerFactory);")
+
+    val getLoggerFactoryMethod = providerClass.getDeclaredMethod("getLoggerFactory")
+    getLoggerFactoryMethod.setBody("return labzenLoggerFactory;")
+
+    providerClass.toClass()
   }
 
   /**

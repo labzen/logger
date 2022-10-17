@@ -1,6 +1,7 @@
 package cn.labzen.logger.kernel
 
 import cn.labzen.logger.kernel.enums.CodeTypes
+import cn.labzen.logger.kernel.enums.Scenes
 import cn.labzen.logger.kernel.enums.Status
 import cn.labzen.logger.kernel.marker.LabzenMarkerWrapper
 import cn.labzen.logger.kernel.marker.SceneMarker
@@ -85,6 +86,12 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
    */
   fun conditional(conditionSupplier: Supplier<Boolean>): LabzenLoggingEventBuilder =
     conditional(conditionSupplier.get())
+
+  /**
+   * 增加场景辅助标识
+   */
+  fun scene(scene: Scenes): LabzenLoggingEventBuilder =
+    scene(scene.name)
 
   /**
    * 增加场景辅助标识

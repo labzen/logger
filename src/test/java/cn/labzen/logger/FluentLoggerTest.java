@@ -45,7 +45,7 @@ public class FluentLoggerTest {
   @Test
   void testScene() {
     System.out.println("             >>>>>> : should be output: '{◆ COMPLETE} log message with complete scene'");
-    logger.info().status(Status.COMPLETE).log("log message with complete scene");
+    logger.info().status(Status.SUCCESS).log("log message with complete scene");
 
     System.out.println("             >>>>>> : should be output: '{✈ TODO} log message with todo scene'");
     logger.warn().status(Status.TODO).log("log message with todo scene");
@@ -154,6 +154,15 @@ public class FluentLoggerTest {
 
     String xml = Files.readString(Paths.get(resource.toURI()));
     logger.debug().xml(xml).log("there is XML text");
+  }
+
+  @Test
+  void testLogYaml() throws URISyntaxException, IOException {
+    URL resource = this.getClass().getClassLoader().getResource("test.yaml");
+    Assertions.assertNotNull(resource);
+
+    String yml = Files.readString(Paths.get(resource.toURI()));
+    logger.debug().yaml(yml).log("there is XML text");
   }
 
   @Test

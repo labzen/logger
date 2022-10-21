@@ -12,6 +12,7 @@ class LabzenLoggerInitializer : ApplicationContextInitializer<ConfigurableApplic
     Int.MIN_VALUE + 20
 
   override fun initialize(applicationContext: ConfigurableApplicationContext) {
+    // todo 靠配置文件，看打印与否
     IdentifiableLoggerConverter.collectLabzenComponentPackages()
     LabzenMetaPrinter.print()
   }

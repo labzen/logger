@@ -1,0 +1,10 @@
+app: logger
+log:
+  function: enhance
+  version: 1
+  levels:
+    - trace
+    - debug
+    - info
+    - warn
+    - error

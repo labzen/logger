@@ -4,6 +4,7 @@ import cn.labzen.logger.kernel.LabzenLogger
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
 
+@Suppress("unused")
 class LabzenReload4jLoggerFactory(private val principal: ILoggerFactory) : ILoggerFactory {
 
   override fun getLogger(name: String?): Logger {

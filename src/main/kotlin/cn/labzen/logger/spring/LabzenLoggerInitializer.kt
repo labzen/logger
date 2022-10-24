@@ -1,6 +1,5 @@
 package cn.labzen.logger.spring
 
-import cn.labzen.logger.logback.pattern.conversion.IdentifiableLoggerConverter
 import cn.labzen.logger.meta.LabzenMetaPrinter
 import cn.labzen.logger.meta.LoggerConfiguration
 import cn.labzen.meta.Labzens
@@ -14,9 +13,8 @@ class LabzenLoggerInitializer : ApplicationContextInitializer<ConfigurableApplic
     Int.MIN_VALUE + 20
 
   override fun initialize(applicationContext: ConfigurableApplicationContext) {
-    IdentifiableLoggerConverter.collectLabzenComponentPackages()
-
     val configuration = Labzens.configurationWith(LoggerConfiguration::class.java)
+
     if (configuration.printMetaInformation()) {
       LabzenMetaPrinter.print()
     }

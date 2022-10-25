@@ -3,10 +3,7 @@ package cn.labzen.logger.kernel
 import cn.labzen.logger.kernel.enums.CodeTypes
 import cn.labzen.logger.kernel.enums.Scenes
 import cn.labzen.logger.kernel.enums.Status
-import cn.labzen.logger.kernel.marker.LabzenMarkerWrapper
-import cn.labzen.logger.kernel.marker.SceneMarker
-import cn.labzen.logger.kernel.marker.StatusMarker
-import cn.labzen.logger.kernel.marker.TagMarker
+import cn.labzen.logger.kernel.marker.*
 import org.slf4j.Logger
 import org.slf4j.Marker
 import org.slf4j.event.Level
@@ -49,6 +46,7 @@ import java.util.function.Supplier
 class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEventBuilder(logger, level) {
 
   private var condition: Boolean = true
+  private var forcedMarker: ForcedMarker? = null
   private var tagMarker: TagMarker? = null
   private var sceneMarker: SceneMarker? = null
   private var statusMarker: StatusMarker? = null
@@ -71,7 +69,10 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
    *
    * **!! 暂未实现 !!**
    */
-  fun force(): LabzenLoggingEventBuilder = this
+  fun force(): LabzenLoggingEventBuilder {
+    this.forcedMarker = ForcedMarker()
+    return this
+  }
 
   /**
    * 日志输出条件，当条件不成立时，不打印日志
@@ -197,48 +198,48 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
   }
 
   private fun addMarkerIfNecessary() {
-    if (sceneMarker != null || statusMarker != null || tagMarker != null) {
-      addMarker(LabzenMarkerWrapper(sceneMarker, statusMarker, tagMarker))
+    if (forcedMarker != null || sceneMarker != null || statusMarker != null || tagMarker != null) {
+      addMarker(LabzenMarkerWrapper(forcedMarker, sceneMarker, statusMarker, tagMarker))
     }
   }
 
   override fun log() {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log()
     }
   }
 
   override fun log(message: String) {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message)
     }
   }
 
   override fun log(message: String, arg: Any) {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, arg)
     }
   }
 
   override fun log(message: String, arg0: Any, arg1: Any) {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, arg0, arg1)
     }
   }
 
   override fun log(message: String, vararg args: Any) {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, *args)
     }
   }
 
   override fun log(messageSupplier: Supplier<String>) {
-    if (enabled && condition) {
+    if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(messageSupplier.get())
     }

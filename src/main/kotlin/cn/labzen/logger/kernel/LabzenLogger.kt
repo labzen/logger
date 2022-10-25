@@ -1,11 +1,79 @@
 package cn.labzen.logger.kernel
 
+import cn.labzen.logger.kernel.marker.LabzenMarkerWrapper
 import org.slf4j.Logger
 import org.slf4j.event.Level
+import org.slf4j.event.LoggingEvent
 import org.slf4j.helpers.MessageFormatter
+import org.slf4j.spi.LoggingEventAware
 import java.util.function.Supplier
 
-class LabzenLogger(private val principal: Logger) : Logger by principal {
+class LabzenLogger(private val principal: Logger) : Logger by principal, LoggingEventAware {
+  override fun log(event: LoggingEvent) {
+    val argArray = event.argumentArray
+    val argLen = argArray?.size ?: 0
+
+    val combinedArguments = event.throwable?.let {
+      arrayOfNulls<Any>(argLen + 1).apply {
+        if (argArray != null) {
+          System.arraycopy(argArray, 0, this, 0, argLen)
+          this[argLen] = it
+        }
+      }
+    } ?: arrayOfNulls(argLen)
+
+    val msg = mergeMarkersAndKeyValuePairs(event, event.message)
+
+    val wrappedMarker = event.markers?.let {
+      val wrapper = it.find { m -> m is LabzenMarkerWrapper } ?: LabzenMarkerWrapper()
+      it.forEach { m ->
+        if (m !is LabzenMarkerWrapper) {
+          wrapper.add(m)
+        }
+      }
+      wrapper
+    }
+
+    when (event.level) {
+      Level.INFO -> principal.info(wrappedMarker, msg, *combinedArguments)
+      Level.WARN -> principal.warn(wrappedMarker, msg, *combinedArguments)
+      Level.ERROR -> principal.error(wrappedMarker, msg, *combinedArguments)
+      Level.DEBUG -> principal.debug(wrappedMarker, msg, *combinedArguments)
+      Level.TRACE -> principal.trace(wrappedMarker, msg, *combinedArguments)
+      null -> principal.info(wrappedMarker, msg, *combinedArguments)
+    }
+  }
+
+  /**
+   * Prepend markers and key-value pairs to the message.
+   */
+  private fun mergeMarkersAndKeyValuePairs(aLoggingEvent: LoggingEvent, msg: String): String {
+    var sb: StringBuilder? = null
+    if (aLoggingEvent.markers != null) {
+      sb = StringBuilder()
+      for (marker in aLoggingEvent.markers) {
+        sb.append(marker)
+        sb.append(' ')
+      }
+    }
+
+    if (aLoggingEvent.keyValuePairs != null) {
+      if (sb == null) {
+        sb = StringBuilder()
+      }
+      for (kvp in aLoggingEvent.keyValuePairs) {
+        sb.append(kvp.key)
+        sb.append('=')
+        sb.append(kvp.value)
+        sb.append(' ')
+      }
+    }
+
+    return if (sb != null) {
+      sb.append(msg)
+      sb.toString()
+    } else msg
+  }
 
   // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ENHANCE TRADITIONAL API >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

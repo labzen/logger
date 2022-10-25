@@ -2,6 +2,7 @@ package cn.labzen.logger.logback
 
 import ch.qos.logback.classic.LoggerContext
 import cn.labzen.logger.kernel.LabzenLogger
+import cn.labzen.logger.logback.filter.ForcedFilter
 import cn.labzen.logger.logback.pattern.conversion.IdentifiableLoggerConverter
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger
@@ -12,6 +13,7 @@ class LabzenLogbackLoggerContext(private val principal: LoggerContext) : ILogger
   init {
     instance = this
 
+    principal.addTurboFilter(ForcedFilter())
     IdentifiableLoggerConverter.collectLabzenComponentPackages()
   }
 

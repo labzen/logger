@@ -39,7 +39,8 @@ public class FluentLoggerTest {
 
   @Test
   void testForce() {
-
+    System.out.println("             >>>>>> : there is log debug message should be output");
+    logger.debug().force().log("log forced message");
   }
 
   @Test

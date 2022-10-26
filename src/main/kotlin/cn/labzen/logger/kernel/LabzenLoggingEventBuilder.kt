@@ -66,8 +66,6 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
 
   /**
    * 强制打印日志，忽略日志级别，但对于[conditional]条件，并不受影响，即如果condition为false，则绝对不会打印
-   *
-   * **!! 暂未实现 !!**
    */
   fun force(): LabzenLoggingEventBuilder {
     this.forcedMarker = ForcedMarker()
@@ -106,15 +104,15 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
    * 增加状态辅助标识
    */
   fun status(status: Status): LabzenLoggingEventBuilder {
-    this.statusMarker = StatusMarker(status.text, status.color)
+    this.statusMarker = StatusMarker(status.text)
     return this
   }
 
   /**
    * 增加状态辅助标识
    */
-  fun status(customerText: String, customerColor: String): LabzenLoggingEventBuilder {
-    this.statusMarker = StatusMarker(customerText, customerColor)
+  fun status(customerText: String): LabzenLoggingEventBuilder {
+    this.statusMarker = StatusMarker(customerText)
     return this
   }
 

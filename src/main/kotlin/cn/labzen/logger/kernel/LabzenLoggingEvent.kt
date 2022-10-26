@@ -27,9 +27,9 @@ class LabzenLoggingEvent(level: Level, logger: Logger) : DefaultLoggingEvent(lev
     msg.replace(LAST_CRLF_REGEX, "").replace(CRLF, FRAME_PREFIX_WITH_CRLF)
 
   companion object {
-    private const val FRAME_LINE_START_PREFIX = "┌─────────===\u001B[7;36m Lang: "
+    private const val FRAME_LINE_START_PREFIX = "┌─────────=== Lang: "
     private const val FRAME_LINE_START_SUFFIX =
-      " \u001B[0;39m===─────────────────────────────────────────────────────────────────"
+      " ===─────────────────────────────────────────────────────────────────"
     private const val FRAME_PREFIX = "│ "
     private const val FRAME_LINE_END =
       "└────────────────────────────────────────────────────────────────────────────────────────────"

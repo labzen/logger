@@ -19,7 +19,6 @@ import java.nio.charset.Charset
 
 class DefaultLogbackConfiguration(private val logFile: LogFile?) {
 
-
   fun apply(config: LogbackConfigurator) {
     config.getConfigurationLock()?.let {
       synchronized(it) {

@@ -45,7 +45,7 @@ enum class Status(val text: String) {
   /**
    * 语义表达一段业务/逻辑已经开始，在一定的业务场景，等同于[START]
    */
-  STARTED("● STARTING"),
+  STARTED("● STARTED"),
 
   /**
    * 语义表达一段业务/逻辑的结束，如需更准确的语义描述，可使用[ENDED]
@@ -55,12 +55,12 @@ enum class Status(val text: String) {
   /**
    * 语义表达一段业务/逻辑的正在结束，并需要持续一定的时间
    */
-  ENDING("■ END"),
+  ENDING("■ ENDING"),
 
   /**
    * 语义表达一段业务/逻辑已经结束，在一定的业务场景，等同于[END]
    */
-  ENDED("■ END"),
+  ENDED("■ ENDED"),
 
   /**
    * 语义表达一段业务/逻辑的中间短暂记录
@@ -75,12 +75,12 @@ enum class Status(val text: String) {
   /**
    * 语义表达一段业务/逻辑正在完成，并需要持续一定的时间
    */
-  COMPLETING("◆ COMPLETE"),
+  COMPLETING("◆ COMPLETING"),
 
   /**
    * 语义表达一段业务/逻辑已经顺利完成，在一定的业务场景，等同于[COMPLETE]
    */
-  COMPLETED("◆ COMPLETE"),
+  COMPLETED("◆ COMPLETED"),
 
   /**
    * 语义表达对某个日志做下标记（普通），可对应IMPORTANT

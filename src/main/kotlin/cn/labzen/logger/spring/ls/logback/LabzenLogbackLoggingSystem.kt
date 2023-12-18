@@ -188,12 +188,12 @@ class LabzenLogbackLoggingSystem(classLoader: ClassLoader) : LabzenLoggingSystem
       configurator.context = loggerContext
       configurator.doConfigure(url)
     } else {
-      ContextInitializer(loggerContext).configureByResource(url)
+      ContextInitializer(loggerContext).autoConfig(classLoader)
     }
   }
 
   private fun getLoggerContext() =
-    LabzenLogbackLoggerContext.singleton().getContext()
+    LabzenLogbackLoggerContext.instance.getContext()
 
   private fun isAlreadyInitialized(loggerContext: LoggerContext): Boolean =
     loggerContext.getObject(LoggingSystem::class.java.name) != null
@@ -212,12 +212,11 @@ class LabzenLogbackLoggingSystem(classLoader: ClassLoader) : LabzenLoggingSystem
 
     private val LEVELS = LogLevels<Level>().also {
       it.map(LogLevel.TRACE, Level.TRACE)
-      it.map(LogLevel.TRACE, Level.ALL)
       it.map(LogLevel.DEBUG, Level.DEBUG)
       it.map(LogLevel.INFO, Level.INFO)
       it.map(LogLevel.WARN, Level.WARN)
-      it.map(LogLevel.ERROR, Level.ERROR)
       it.map(LogLevel.FATAL, Level.ERROR)
+      it.map(LogLevel.ERROR, Level.ERROR)
       it.map(LogLevel.OFF, Level.OFF)
     }
 

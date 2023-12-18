@@ -50,6 +50,8 @@ public class FluentLoggerTest {
 
     System.out.println("             >>>>>> : should be output: '{✈ TODO} log message with todo scene'");
     logger.warn().status(Status.TODO).log("log message with todo scene");
+
+    logger.warn().status(Status.FIXME).log("没有Controller的方法实现，未指定ServiceHandler的main参数");
   }
 
   @Test

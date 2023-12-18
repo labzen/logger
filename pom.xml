@@ -7,15 +7,15 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>cn.labzen</groupId>
-    <version>11.7</version>
+    <version>11.9-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <artifactId>logger</artifactId>
   <packaging>jar</packaging>
   <version>1.5-SNAPSHOT</version>
-  <name>${organization.name}.Logger</name>
-  <description>Labzen Logger - enhanced logger wrapped logback or log4j</description>
+  <name>Labzen.Logger</name>
+  <description>Labzen Logger - enhanced logger wrapped logback or reload4j</description>
   <url>https://github.com/labzen/logger</url>
 
   <licenses>
@@ -26,8 +26,8 @@
   </licenses>
 
   <organization>
-    <name>${organization.name}</name>
-    <url>${organization.url}</url>
+    <name>Labzen</name>
+    <url>https://labzen.cn</url>
   </organization>
 
   <developers>
@@ -89,6 +89,11 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
     </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.logging.log4j</groupId>-->
+    <!--      <artifactId>log4j-slf4j-impl</artifactId>-->
+    <!--      <optional>true</optional>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-reload4j</artifactId>

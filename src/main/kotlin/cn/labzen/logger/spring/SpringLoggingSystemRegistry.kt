@@ -3,7 +3,7 @@ package cn.labzen.logger.spring
 import cn.labzen.logger.Loggers
 import org.springframework.boot.logging.LoggingSystem
 
-internal object LabzenLoggingSystemRegistry {
+internal object SpringLoggingSystemRegistry {
 
   /**
    * 为了兼容 Spring Boot 的 LoggingSystem.beforeInitialize() 中使用了 Slf4j 1.x 的静态类绑定能力，

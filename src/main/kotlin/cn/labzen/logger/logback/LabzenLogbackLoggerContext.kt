@@ -25,11 +25,6 @@ class LabzenLogbackLoggerContext(private val principal: LoggerContext) : ILogger
   }
 
   companion object {
-
-    private var instance: LabzenLogbackLoggerContext? = null
-
-    internal fun singleton(): LabzenLogbackLoggerContext {
-      return instance!!
-    }
+    internal lateinit var instance: LabzenLogbackLoggerContext
   }
 }

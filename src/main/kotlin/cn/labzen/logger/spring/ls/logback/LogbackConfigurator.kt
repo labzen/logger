@@ -62,12 +62,12 @@ open class LogbackConfigurator(private val context: LoggerContext) {
   }
 
   @SafeVarargs
-  fun root(level: Level?, vararg appenders: Appender<ILoggingEvent>?) {
+  fun root(level: Level?, vararg appenderCollection: Appender<ILoggingEvent>?) {
     val logger = context.getLogger(Logger.ROOT_LOGGER_NAME)
     if (level != null) {
       logger.level = level
     }
-    for (appender in appenders) {
+    for (appender in appenderCollection) {
       logger.addAppender(appender)
     }
   }

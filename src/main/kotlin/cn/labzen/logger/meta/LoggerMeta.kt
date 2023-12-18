@@ -10,5 +10,5 @@ class LoggerMeta : LabzenComponent {
     "cn.labzen.logger"
 
   override fun description(): String =
-    "基于SLF4j日志门户，封装Logback或Log4j2(Reload4j)提供增强的日志功能"
+    "基于SLF4j日志门户，封装Logback或Reload4j(Log4j2)提供增强的日志功能"
 }

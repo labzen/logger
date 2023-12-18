@@ -172,6 +172,9 @@ public class SimpleBizClass {
 
 ## 备注
 
-当前版本，基于 Slf4j 1.7.36 + Logback 1.2.10，借用 logback classic 的 ContextSelector 实现 LoggerFactory 实例的获取切入。
+当前版本 Slf4j 2.0.9 + Logback 1.4.14 / Reload4j 1.2.25。基于 system property : 'slf4j.provider' 指定自定义的 ServicesProvider
+来实现增强 Logger 的引入。
 
-后续版本，将基于 Slf4j 2.0 + Logback 1.3.x / Log4j 1.2.x ；基于 ServiceLoader 的 SLF4JServiceProvider 类来实现LoggerFactory 实例的获取切入。
+spring boot 2.x 默认使用 slf4j 1.7.x
+
+spring boot 3.x 默认使用 slf4j 2.0.x

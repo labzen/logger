@@ -16,6 +16,7 @@ class LabzenLoggerInitializer : ApplicationContextInitializer<ConfigurableApplic
   override fun initialize(applicationContext: ConfigurableApplicationContext) {
     val configuration = Labzens.configurationWith(LoggerConfiguration::class.java)
 
+    // 打印 Labzen 信息
     if (configuration.printMetaInformation()) {
       LabzenMetaPrinter.print()
     }

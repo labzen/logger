@@ -1,4 +1,4 @@
-package cn.labzen.logger.embed.tomcat
+package cn.labzen.logger.library.tomcat
 
 import cn.labzen.logger.Loggers
 import org.apache.juli.logging.Log
@@ -10,7 +10,7 @@ class TomcatLog(fqcn: String) : Log {
   private val logger = Loggers.getLogger(fqcn)
 
   companion object {
-    private val SERVLET_NAME = "TOMCAT"
+    private const val SERVLET_NAME = "TOMCAT"
   }
 
   override fun isDebugEnabled(): Boolean =
@@ -36,11 +36,7 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun trace(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.trace("{}", message)
-    } else {
-      logger.trace().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.trace().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 
   override fun debug(message: Any?) {
@@ -48,11 +44,7 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun debug(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.debug("{}", message)
-    } else {
-      logger.debug().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.debug().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 
   override fun info(message: Any?) {
@@ -60,11 +52,7 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun info(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.info("{}", message)
-    } else {
-      logger.info().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.info().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 
   override fun warn(message: Any?) {
@@ -72,11 +60,7 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun warn(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.warn("{}", message)
-    } else {
-      logger.warn().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.warn().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 
   override fun error(message: Any?) {
@@ -84,11 +68,7 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun error(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.error("{}", message)
-    } else {
-      logger.error().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.error().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 
   override fun fatal(message: Any?) {
@@ -96,10 +76,6 @@ class TomcatLog(fqcn: String) : Log {
   }
 
   override fun fatal(message: Any?, t: Throwable?) {
-    if (t == null) {
-      logger.error("{}", message)
-    } else {
-      logger.error().scene(SERVLET_NAME).setCause(t).log("$message")
-    }
+    logger.error().scene(SERVLET_NAME).setCause(t).log("$message")
   }
 }

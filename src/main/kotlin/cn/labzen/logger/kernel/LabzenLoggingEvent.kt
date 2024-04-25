@@ -1,5 +1,6 @@
 package cn.labzen.logger.kernel
 
+import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import cn.labzen.logger.kernel.enums.CodeTypes
 import cn.labzen.logger.kernel.tile.MessagePatternTileManager
 import org.slf4j.Logger
@@ -24,18 +25,17 @@ class LabzenLoggingEvent(level: Level, logger: Logger) : DefaultLoggingEvent(lev
   }
 
   private fun formattedCodeMessage(msg: String) =
-    msg.replace(LAST_CRLF_REGEX, "").replace(CRLF, FRAME_PREFIX_WITH_CRLF)
+    msg.replace(LAST_CRLF_REGEX, "").replace(LINE_SEPARATOR, FRAME_PREFIX_WITH_CRLF)
 
   companion object {
-    private const val FRAME_LINE_START_PREFIX = "┌─────────=== Lang: "
+    private const val FRAME_LINE_START_PREFIX = "┌──────────── ====== Lang: "
     private const val FRAME_LINE_START_SUFFIX =
-      " ===─────────────────────────────────────────────────────────────────"
+      " ====== ─────────────────────────────────────────────────────────────────"
     private const val FRAME_PREFIX = "│ "
     private const val FRAME_LINE_END =
-      "└────────────────────────────────────────────────────────────────────────────────────────────"
+      "└───────────────────────────────────────────────────────────────────────────────────────────────────────"
 
-    private val CRLF = System.getProperty("line.separator")
-    private val FRAME_PREFIX_WITH_CRLF = "$CRLF  │ "
-    private val LAST_CRLF_REGEX = Regex("$CRLF$")
+    private val FRAME_PREFIX_WITH_CRLF = "$LINE_SEPARATOR  │ "
+    private val LAST_CRLF_REGEX = Regex("$LINE_SEPARATOR$")
   }
 }

@@ -21,6 +21,18 @@ object Loggers {
 
   /**
    * 增强SLF4j，改方法必须在第一次使用[LoggerFactory.getLogger]调用之前（包括使用 Lombok 的 @Slf4j 等注解获取Logger对象的方式）执行
+   *
+   * 如果是Spring Boot项目，一般会在main函数中第一行调用，例如：
+   * ```java
+   * @SpringBootApplication
+   * public class Launcher {
+   *
+   *   public static void main(String[] args) {
+   *     Loggers.enhance();
+   *     SpringApplication.run(Launcher.class);
+   *   }
+   * }
+   * ```
    */
   @JvmStatic
   fun enhance() {
@@ -50,7 +62,8 @@ object Loggers {
     } catch (e: Exception) {
       false
     }
-    isReload4jPresent = try {
+
+    isReload4jPresent = !isLogbackPresent && try {
       Class.forName("org.slf4j.reload4j.Reload4jServiceProvider")
       true
     } catch (e: Exception) {

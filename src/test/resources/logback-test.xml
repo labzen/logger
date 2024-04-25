@@ -7,7 +7,8 @@
 
   <appender name="STDOUT" class="ConsoleAppender">
     <encoder class="PatternLayoutEncoder">
-      <pattern>[%thread] || %d{HH:mm:ss.SSS} == %ZLevel %logger{36} - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} %yellow([%15.15thread]) %highlighter(%-5level) - %cyan(%-45.45logger) : %msg%newEx%n</pattern>
+<!--      <pattern>[%thread] || %d{HH:mm:ss.SSS} == %ZLevel %logger{36} - %msg%n</pattern>-->
     </encoder>
   </appender>
 
@@ -19,7 +20,7 @@
     <!--定义日志滚动的策略-->
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!--定义文件滚动时的文件名的格式-->
-      <fileNamePattern>/Users/dean/Working/.logs/labzen/${app.name}.%d{yyyy-MM-dd.HH}.log.gz
+      <fileNamePattern>/Users/dean/Working/.logs/labzen/$logger.%d{yyyy-MM-dd.HH}.log.gz
       </fileNamePattern>
       <!--60天的时间周期，日志量最大20GB-->
       <maxHistory>60</maxHistory>
@@ -32,7 +33,7 @@
     </encoder>
   </appender>
 
-  <root level="info">
+  <root level="debug">
     <appender-ref ref="STDOUT"/>
     <appender-ref ref="file"/>
   </root>

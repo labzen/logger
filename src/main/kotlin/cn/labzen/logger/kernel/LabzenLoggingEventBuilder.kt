@@ -215,21 +215,21 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
     }
   }
 
-  override fun log(message: String, arg: Any) {
+  override fun log(message: String, arg: Any?) {
     if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, arg)
     }
   }
 
-  override fun log(message: String, arg0: Any, arg1: Any) {
+  override fun log(message: String, arg0: Any?, arg1: Any?) {
     if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, arg0, arg1)
     }
   }
 
-  override fun log(message: String, vararg args: Any) {
+  override fun log(message: String, vararg args: Any?) {
     if (condition && (enabled || forcedMarker != null)) {
       addMarkerIfNecessary()
       super.log(message, *args)
@@ -250,7 +250,7 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
     return this
   }
 
-  override fun addMarker(marker: Marker?): LabzenLoggingEventBuilder {
+  override fun addMarker(marker: Marker): LabzenLoggingEventBuilder {
     super.addMarker(marker)
     return this
   }
@@ -275,12 +275,12 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
     return this
   }
 
-  override fun setMessage(message: String?): LabzenLoggingEventBuilder {
+  override fun setMessage(message: String): LabzenLoggingEventBuilder {
     super.setMessage(message)
     return this
   }
 
-  override fun setMessage(messageSupplier: Supplier<String>?): LabzenLoggingEventBuilder {
+  override fun setMessage(messageSupplier: Supplier<String>): LabzenLoggingEventBuilder {
     super.setMessage(messageSupplier)
     return this
   }

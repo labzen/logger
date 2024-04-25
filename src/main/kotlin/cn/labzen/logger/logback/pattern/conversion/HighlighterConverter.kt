@@ -3,7 +3,6 @@ package cn.labzen.logger.logback.pattern.conversion
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.pattern.CompositeConverter
-import ch.qos.logback.core.pattern.color.ANSIConstants.*
 
 /**
  * Color的说明见下：
@@ -35,24 +34,26 @@ import ch.qos.logback.core.pattern.color.ANSIConstants.*
  * - \33[?25l 隐藏光标
  * - \33[?25h 显示光标
  */
-class ColoredLevelConverter : CompositeConverter<ILoggingEvent>() {
+class HighlighterConverter : CompositeConverter<ILoggingEvent>() {
 
   override fun transform(event: ILoggingEvent, text: String?): String =
-    when (event.level) {
-      Level.ERROR -> ERROR_TEXT
-      Level.WARN -> WARN_TEXT
-      Level.INFO -> INFO_TEXT
-      Level.DEBUG -> DEBUG_TEXT
-      else -> TRACE_TEXT
-    }
+    StringBuilder().append(
+      when (event.level) {
+        Level.ERROR -> ERROR_LEVEL_TEXT
+        Level.WARN -> WARN_LEVEL_TEXT
+        Level.INFO -> INFO_LEVEL_TEXT
+        Level.DEBUG -> DEBUG_LEVEL_TEXT
+        else -> TRACE_LEVEL_TEXT
+      }
+    ).append(text).append(ESC_END).toString()
 
   companion object {
-    private const val ANSI_END = "$ESC_START$DEFAULT_FG$ESC_END"
+    private const val ESC_END = "\u001B[0;39;49m"
 
-    private const val ERROR_TEXT = "$ESC_START$RED_FG${ESC_END}ERROR$ANSI_END"
-    private const val WARN_TEXT = "$ESC_START$YELLOW_FG${ESC_END}WARN$ANSI_END"
-    private const val INFO_TEXT = "$ESC_START$GREEN_FG${ESC_END}INFO $ANSI_END"
-    private const val DEBUG_TEXT = "$ESC_START$BLUE_FG${ESC_END}DEBUG$ANSI_END"
-    private const val TRACE_TEXT = "$ESC_START$CYAN_FG${ESC_END}TRACE$ANSI_END"
+    private const val ERROR_LEVEL_TEXT = "\u001B[1;4;30;41m"
+    private const val WARN_LEVEL_TEXT = "\u001B[1;30;43m"
+    private const val INFO_LEVEL_TEXT = "\u001B[30;42m"
+    private const val DEBUG_LEVEL_TEXT = "\u001B[30;47m"
+    private const val TRACE_LEVEL_TEXT = "\u001B[30;47m"
   }
 }

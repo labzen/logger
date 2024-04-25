@@ -8,6 +8,9 @@ import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.Ordered
 
+/**
+ * 在Spring Boot的项目启动时执行
+ */
 class LabzenLoggerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
 
   override fun getOrder(): Int =
@@ -16,7 +19,7 @@ class LabzenLoggerInitializer : ApplicationContextInitializer<ConfigurableApplic
   override fun initialize(applicationContext: ConfigurableApplicationContext) {
     val configuration = Labzens.configurationWith(LoggerConfiguration::class.java)
 
-    // 打印 Labzen 信息
+    // 打印 Labzen 模组信息
     if (configuration.printMetaInformation()) {
       LabzenMetaPrinter.print()
     }

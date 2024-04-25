@@ -1,10 +1,5 @@
 package cn.labzen.logger.logback
 
-import ch.qos.logback.classic.PatternLayout
-import cn.labzen.logger.logback.pattern.conversion.ColoredLevelConverter
-import cn.labzen.logger.logback.pattern.conversion.IdentifiableLoggerConverter
-import cn.labzen.logger.logback.pattern.conversion.IndentedThrowableProxyConverter
-
 @Suppress("unused")
 @Deprecated("")
 object LogbackPreprocessor {

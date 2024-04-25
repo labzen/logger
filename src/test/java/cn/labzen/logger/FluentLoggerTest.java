@@ -165,7 +165,7 @@ public class FluentLoggerTest {
     Assertions.assertNotNull(resource);
 
     String yml = Files.readString(Paths.get(resource.toURI()));
-    logger.debug().yaml(yml).log("there is XML text");
+    logger.debug().yaml(yml).log("there is YAML text");
   }
 
   @Test

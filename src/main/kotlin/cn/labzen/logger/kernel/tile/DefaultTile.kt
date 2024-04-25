@@ -3,7 +3,7 @@ package cn.labzen.logger.kernel.tile
 import java.util.*
 
 /**
- * 默认占位，格式：{}
+ * 默认占位，格式：{}，兼容括号内存在空格的情况，如：{ }
  */
 internal open class DefaultTile(private val position: Int) : Tile<Any?>(), HeadTile {
 

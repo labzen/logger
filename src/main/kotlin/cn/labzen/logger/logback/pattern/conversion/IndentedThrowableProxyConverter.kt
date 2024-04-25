@@ -9,9 +9,9 @@ class IndentedThrowableProxyConverter : ThrowableProxyConverter() {
 
   override fun throwableProxyToString(tp: IThrowableProxy?): String =
     StringBuilder(BUILDER_CAPACITY).apply {
-      this.append(FRAME_LINE_START).append(LINE_SEPARATOR)
+      append(LINE_SEPARATOR).append(FRAME_LINE_START).append(LINE_SEPARATOR)
       recursiveAppend(this, null, 0, tp)
-      this.append(FRAME_LINE_END).append(LINE_SEPARATOR)
+      append(FRAME_LINE_END).append(LINE_SEPARATOR)
     }.toString()
 
   private fun indent(buf: StringBuilder, space: Int) {

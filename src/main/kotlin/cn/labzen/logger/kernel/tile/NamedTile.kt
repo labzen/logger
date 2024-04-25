@@ -11,7 +11,7 @@ internal class NamedTile(private val key: String) : Tile<Any?>(), HeadTile {
    * @param value must be Map<String, Any?>
    */
   override fun convert(value: Any?): Any? =
-    if (value is Array<*> && value.size == 1 && value[0] is Map<*, *>) {
+    if (value is List<*> && value.size == 1 && value[0] is Map<*, *>) {
       (value[0] as Map<*, *>)[key]
     } else {
       null

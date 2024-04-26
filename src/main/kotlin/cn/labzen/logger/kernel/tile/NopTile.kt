@@ -1,6 +1,6 @@
 package cn.labzen.logger.kernel.tile
 
-internal class NopTile : Tile<Any?>(), HeadTile {
+internal class NopTile : AbstractTile<Any?>(), HeadTile<Any?> {
 
   override fun convert(value: Any?) = ""
 

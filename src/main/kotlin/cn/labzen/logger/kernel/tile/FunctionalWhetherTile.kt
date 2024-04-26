@@ -8,7 +8,7 @@ import java.util.*
 internal class FunctionalWhetherTile(
   private val trueText: String,
   private val falseText: String
-) : Tile<String>() {
+) : AbstractTile<String>() {
 
   override fun convert(value: Any?): String =
     if (value == true) trueText else falseText

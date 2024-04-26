@@ -5,7 +5,7 @@ import java.util.*
 internal class FunctionalWidthControlTile(
   private val min: Int = UNDEFINED,
   private val max: Int = UNDEFINED
-) : Tile<String?>() {
+) : AbstractTile<String?>() {
 
   init {
     if (min == UNDEFINED && max == UNDEFINED) {

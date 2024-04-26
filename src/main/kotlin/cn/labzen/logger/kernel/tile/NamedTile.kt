@@ -5,7 +5,7 @@ import java.util.*
 /**
  * 指参占位，顺序占位，格式：{param_name}，日志参数必须是[Map]
  */
-internal class NamedTile(private val key: String) : Tile<Any?>(), HeadTile {
+internal class NamedTile(private val key: String) : AbstractTile<Any?>(), HeadTile<Any?> {
 
   /**
    * @param value must be Map<String, Any?>

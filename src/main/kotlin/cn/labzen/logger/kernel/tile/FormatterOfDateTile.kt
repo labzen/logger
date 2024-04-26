@@ -8,7 +8,7 @@ import java.util.*
 /**
  * 格式化占位，日期格式化占位，格式：{@date_yyyy-MM-dd}
  */
-internal class FormatterOfDateTile(pattern: String) : Tile<String>() {
+internal class FormatterOfDateTile(pattern: String) : AbstractTile<String>() {
 
   private val formatter = DateTimeFormatter.ofPattern(pattern)
 

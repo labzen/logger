@@ -11,7 +11,7 @@ object MessagePatternTileManager {
   private val placeholders: LoadingCache<String, List<PlaceholderWrapper>> = Caffeine.newBuilder().maximumSize(4096)
     .expireAfterAccess(10, TimeUnit.MINUTES).build { key -> parsePlaceholders(key) }
 
-  fun transform(pattern: String, args: Any?): String {
+  fun transform(pattern: String, args: List<Any?>?): String {
     val placeholders = placeholders.get(pattern)
     // 1TODO 缓存取
     // val parsed = parsePlaceholders(pattern)
@@ -19,7 +19,7 @@ object MessagePatternTileManager {
     return formatMessage(pattern, placeholders, args)
   }
 
-  private fun formatMessage(pattern: String, wrappers: List<PlaceholderWrapper>, value: Any?): String {
+  private fun formatMessage(pattern: String, wrappers: List<PlaceholderWrapper>, values: List<Any?>?): String {
     if (wrappers.isEmpty()) {
       return pattern
     }
@@ -32,7 +32,7 @@ object MessagePatternTileManager {
         buffer.append(pattern[i])
       }
 
-      val convertedValue = tileConvert(buffer, it.firstTile, value)
+      val convertedValue = tileConvert(it.firstTile, values)
       buffer.append(convertedValue)
 
       index = it.endIndex + 1
@@ -46,14 +46,14 @@ object MessagePatternTileManager {
     return buffer.toString()
   }
 
-  private fun tileConvert(buf: StringBuilder, tile: Tile<*>?, value: Any?): String {
+  private fun tileConvert(tile: HeadTile<*>?, values: List<Any?>?): String {
     tile ?: return ""
 
-    var point = tile
-    var converted: Any? = value
-    while (point != null) {
-      converted = point.convert(converted)
-      point = point.next
+    var pointer: Tile<*>? = tile
+    var converted: Any? = values
+    while (pointer != null) {
+      converted = pointer.convert(converted)
+      pointer = pointer.getNext()
     }
     return converted?.toString() ?: ""
   }
@@ -129,7 +129,7 @@ object MessagePatternTileManager {
   //   }
   // }
 
-  private fun parsePlaceholderTiles(text: String, foundTimes: Int): Tile<*> {
+  private fun parsePlaceholderTiles(text: String, foundTimes: Int): HeadTile<*> {
     val mightExistTiles = text.contains('@')
     return if (mightExistTiles) {
       parseFunctionTiles(text, foundTimes)
@@ -138,9 +138,9 @@ object MessagePatternTileManager {
     }
   }
 
-  private fun parseFunctionTiles(text: String, foundTimes: Int): Tile<*> {
+  private fun parseFunctionTiles(text: String, foundTimes: Int): HeadTile<*> {
     val firstTileStartIndex = text.indexOf('@')
-    val tileHead: Tile<*> = if (firstTileStartIndex != 0) {
+    val tileHead: HeadTile<*> = if (firstTileStartIndex != 0) {
       val beforeText = text.substring(0, firstTileStartIndex)
       parseSimpleTile(beforeText, foundTimes)
     } else {
@@ -162,15 +162,15 @@ object MessagePatternTileManager {
     }
     val tileText = text.substring(startIndex, endIndex)
 
-    val tile = Tile.match(tileText) ?: WrongTile("WRONG_TILE[$tileText]")
-    prevTile.next = tile
+    val tile = AbstractTile.match(tileText) ?: WrongTile("WRONG_TILE[$tileText]")
+    prevTile.setNext(tile)
 
     if (nextTileStartIndex > 0) {
       parseFunctionTile(text, nextTileStartIndex, tile)
     }
   }
 
-  private fun parseSimpleTile(text: String, foundTimes: Int): Tile<*> {
+  private fun parseSimpleTile(text: String, foundTimes: Int): HeadTile<*> {
     return if (text.isBlank()) {
       DefaultTile(foundTimes)
     } else {
@@ -218,6 +218,6 @@ object MessagePatternTileManager {
     val startIndex: Int,
     val endIndex: Int,
     val internalText: String,
-    val firstTile: Tile<*>
+    val firstTile: HeadTile<*>
   )
 }

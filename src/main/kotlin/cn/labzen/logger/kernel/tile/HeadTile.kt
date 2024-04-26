@@ -1,3 +1,3 @@
 package cn.labzen.logger.kernel.tile
 
-interface HeadTile
+interface HeadTile<out R> : Tile<R>

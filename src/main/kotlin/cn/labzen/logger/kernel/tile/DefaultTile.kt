@@ -5,7 +5,7 @@ import java.util.*
 /**
  * 默认占位，格式：{}，兼容括号内存在空格的情况，如：{ }
  */
-internal open class DefaultTile(private val position: Int) : Tile<Any?>(), HeadTile {
+internal open class DefaultTile(private val position: Int) : AbstractTile<Any?>(), HeadTile<Any?> {
 
   override fun convert(value: Any?): Any? {
     return when (value) {

@@ -6,7 +6,7 @@ import java.util.*
 /**
  * 格式化占位，数字格式化占位，格式：{@number_0.00}
  */
-internal class FormatterOfNumberTile(pattern: String) : Tile<String?>() {
+internal class FormatterOfNumberTile(pattern: String) : AbstractTile<String?>() {
 
   private val formatter = DecimalFormat(pattern)
 

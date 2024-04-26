@@ -5,7 +5,7 @@ import java.util.*
 /**
  * 函数式占位，将参数使用给定的字符包裹输出，格式：{@wrap_[]}
  */
-internal class FunctionalWrapTile(private val edge: String) : Tile<String?>() {
+internal class FunctionalWrapTile(private val edge: String) : AbstractTile<String?>() {
 
   init {
     if (edge.length != 2) {

@@ -13,9 +13,6 @@ object MessagePatternTileManager {
 
   fun transform(pattern: String, args: List<Any?>?): String {
     val placeholders = placeholders.get(pattern)
-    // 1TODO 缓存取
-    // val parsed = parsePlaceholders(pattern)
-
     return formatMessage(pattern, placeholders, args)
   }
 
@@ -95,39 +92,7 @@ object MessagePatternTileManager {
     val internalText = pattern.substring(startIndex + 1, endIndex)
     val tiles = parsePlaceholderTiles(internalText, foundTimes)
     return PlaceholderWrapper(foundTimes, startIndex, endIndex, internalText, tiles)
-    // val pw = findHeadTileAndWrapIt(pattern, startIndex, foundTimes) ?: return null
-    //
-    // val tileStartIndex = pw.internalText.indexOf('@', 0)
-    // if (tileStartIndex >= 0) {
-    //   findTiles(pw.internalText, tileStartIndex, pw.firstTile)
-    // }
-    //
-    // return pw
   }
-
-  // private fun findTiles(placeholderText: String, startIndex: Int, point: Tile<*>) {
-  //   val nextTileStartIndex = placeholderText.indexOf('@', startIndex + 1)
-  //   val endIndex = if (nextTileStartIndex < 0) {
-  //     placeholderText.length
-  //   } else {
-  //     nextTileStartIndex
-  //   }
-  //
-  //   val tileText = placeholderText.substring(startIndex, endIndex)
-  //   val tile = Tile.match(tileText)
-  //   val nextPoint = if (tile == null) {
-  //     point
-  //   } else {
-  //     point.next = tile
-  //     tile
-  //   }
-  //
-  //   if (nextTileStartIndex < 0) {
-  //     return
-  //   } else {
-  //     findTiles(placeholderText, nextTileStartIndex, nextPoint)
-  //   }
-  // }
 
   private fun parsePlaceholderTiles(text: String, foundTimes: Int): HeadTile<*> {
     val mightExistTiles = text.contains('@')
@@ -183,35 +148,6 @@ object MessagePatternTileManager {
       }
     }
   }
-
-//   private fun findHeadTileAndWrapIt(pattern: String, startIndex: Int, foundTimes: Int): PlaceholderWrapper? {
-//
-//     // return if (endIndex < 0) {
-//     //   null
-//     // } else {
-//     //   val internalText = pattern.substring(startIndex + 1, endIndex)
-//
-//     val firstTileStartIndex = internalText.indexOf('@')
-//     val tileIdentifyText = if (firstTileStartIndex < 0) {
-//       internalText
-//     } else {
-//       internalText.substring(0, firstTileStartIndex).trim()
-//     }
-//
-//     if (tileIdentifyText.isBlank()) {
-//       return PlaceholderWrapper(foundTimes, startIndex, endIndex, internalText, DefaultTile(foundTimes))
-//     }
-//
-//     val head = try {
-//       val position = tileIdentifyText.toInt()
-//       PositionTile(position)
-//     } catch (e: Exception) {
-//       // ignore e
-//       NamedTile(tileIdentifyText)
-//     }
-//     PlaceholderWrapper(foundTimes, startIndex, endIndex, internalText, head)
-//   }
-// }
 
   internal data class PlaceholderWrapper(
     val position: Int,

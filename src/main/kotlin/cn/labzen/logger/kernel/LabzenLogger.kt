@@ -8,8 +8,32 @@ import org.slf4j.spi.LoggingEventAware
 import java.util.function.Supplier
 
 class LabzenLogger(private val principal: Logger) : Logger by principal, LoggingEventAware {
+
+  private var messagePrefix: String? = null
+  private var messagePrefixEnabled = false
+  private var changeMessagePrefixAfter = false
+
+  internal fun startMessagePrefix(prefix: String, now: Boolean = false) {
+    messagePrefix = prefix
+    messagePrefixEnabled = now
+    changeMessagePrefixAfter = !now
+  }
+
+  internal fun endMessagePrefix(now: Boolean = false) {
+    messagePrefix = null
+    messagePrefixEnabled = !now
+    changeMessagePrefixAfter = !now
+  }
+
+  internal fun messagePrefix() = if (messagePrefixEnabled) messagePrefix else null
+
   override fun log(event: LoggingEvent) {
     val preprocessedMsg = mergeMarkersAndKeyValuePairs(event, event.message)
+
+    if (changeMessagePrefixAfter) {
+      changeMessagePrefixAfter = false
+      messagePrefixEnabled = !messagePrefixEnabled
+    }
 
     val hasException = event.throwable != null
 

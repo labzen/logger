@@ -3,17 +3,20 @@ package cn.labzen.logger.kernel
 import ch.qos.logback.core.CoreConstants.LINE_SEPARATOR
 import cn.labzen.logger.kernel.enums.CodeTypes
 import cn.labzen.logger.kernel.tile.handle.MessagePatternTileManager
-import org.slf4j.Logger
 import org.slf4j.event.DefaultLoggingEvent
 import org.slf4j.event.Level
 
-class LabzenLoggingEvent(level: Level, logger: Logger) : DefaultLoggingEvent(level, logger) {
+class LabzenLoggingEvent(
+  level: Level,
+  private val labzenLogger: LabzenLogger
+) : DefaultLoggingEvent(level, labzenLogger) {
 
   internal var codeType: CodeTypes? = null
   internal var codeText: String? = null
 
   override fun getMessage(): String {
-    val message = MessagePatternTileManager.transform(super.getMessage() ?: "", super.getArguments())
+    val message = (labzenLogger.messagePrefix() ?: "") +
+        MessagePatternTileManager.transform(super.getMessage() ?: "", super.getArguments())
 
     return codeType?.let {
       """$message

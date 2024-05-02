@@ -1,6 +1,7 @@
 package cn.labzen.logger;
 
 import cn.labzen.logger.kernel.LabzenLogger;
+import cn.labzen.logger.kernel.enums.Scenes;
 import cn.labzen.logger.kernel.enums.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -181,6 +182,15 @@ public class FluentLoggerTest {
   @Test
   void testComplexMessage() {
 
+  }
+
+  @Test
+  void testPrefixMessage() {
+    logger.info().startPrefix(" --- ").log("接下来的日志会有前缀");
+      logger.info().scene(Scenes.LISTENER).log("第 {} 条日志", 1);
+      logger.warn().scene(Scenes.FILTER).status(Status.FIXME).log("第 {} 条日志", 2);
+      logger.debug().log("第 {} 条日志", 3);
+    logger.info().endPrefix(true).log("带有前缀的日志结束了");
   }
 
 }

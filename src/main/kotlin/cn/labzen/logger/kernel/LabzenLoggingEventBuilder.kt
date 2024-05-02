@@ -4,7 +4,6 @@ import cn.labzen.logger.kernel.enums.CodeTypes
 import cn.labzen.logger.kernel.enums.Scenes
 import cn.labzen.logger.kernel.enums.Status
 import cn.labzen.logger.kernel.marker.*
-import org.slf4j.Logger
 import org.slf4j.Marker
 import org.slf4j.event.Level
 import org.slf4j.spi.DefaultLoggingEventBuilder
@@ -43,21 +42,24 @@ import java.util.function.Supplier
  * 2. List<Object>（按顺序对应日志模板中的placeholder）
  * 3. 其他Object类型（只能对应日志模板中的一个参数placeholder）
  */
-class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEventBuilder(logger, level) {
+class LabzenLoggingEventBuilder(
+  private val labzenLogger: LabzenLogger,
+  level: Level
+) : DefaultLoggingEventBuilder(labzenLogger, level) {
 
   private var condition: Boolean = true
   private var forcedMarker: ForcedMarker? = null
   private var tagMarker: TagMarker? = null
   private var sceneMarker: SceneMarker? = null
   private var statusMarker: StatusMarker? = null
-  private val le: LabzenLoggingEvent = LabzenLoggingEvent(level, logger)
+  private val le: LabzenLoggingEvent = LabzenLoggingEvent(level, labzenLogger)
 
   private val enabled = when (level) {
-    Level.TRACE -> logger.isTraceEnabled
-    Level.DEBUG -> logger.isDebugEnabled
-    Level.INFO -> logger.isInfoEnabled
-    Level.WARN -> logger.isWarnEnabled
-    Level.ERROR -> logger.isErrorEnabled
+    Level.TRACE -> labzenLogger.isTraceEnabled
+    Level.DEBUG -> labzenLogger.isDebugEnabled
+    Level.INFO -> labzenLogger.isInfoEnabled
+    Level.WARN -> labzenLogger.isWarnEnabled
+    Level.ERROR -> labzenLogger.isErrorEnabled
   }
 
   init {
@@ -192,6 +194,29 @@ class LabzenLoggingEventBuilder(logger: Logger, level: Level) : DefaultLoggingEv
   fun yaml(text: String): LabzenLoggingEventBuilder {
     le.codeType = CodeTypes.YAML
     le.codeText = text
+    return this
+  }
+
+  /**
+   * 给当前logger的每条日志，加上前缀
+   *
+   * @param prefix 前缀字符
+   * @param now true - 从当前日志开始，false - 从下一行开始
+   */
+  @JvmOverloads
+  fun startPrefix(prefix: String, now: Boolean = false): LabzenLoggingEventBuilder {
+    labzenLogger.startMessagePrefix(prefix, now)
+    return this
+  }
+
+  /**
+   * 结束logger打印日志时加的前缀
+   *
+   * @param now true - 从当前日志开始，false - 从下一行开始
+   */
+  @JvmOverloads
+  fun endPrefix(now: Boolean = false): LabzenLoggingEventBuilder {
+    labzenLogger.endMessagePrefix(now)
     return this
   }
 

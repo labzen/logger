@@ -178,3 +178,6 @@ public class SimpleBizClass {
 spring boot 2.x 默认使用 slf4j 1.7.x
 
 spring boot 3.x 默认使用 slf4j 2.0.x
+
+----
+提供了 Tomcat 的自定义日志，统一日志输出样式

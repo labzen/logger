@@ -1,0 +1,2 @@
+- logback 配置文件的增强，或补充、简化
+- 给 scene, tag, status 增加颜色输出

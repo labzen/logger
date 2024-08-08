@@ -4,6 +4,7 @@ import cn.labzen.logger.kernel.enums.CodeTypes
 import cn.labzen.logger.kernel.enums.Scenes
 import cn.labzen.logger.kernel.enums.Status
 import cn.labzen.logger.kernel.marker.*
+import cn.labzen.logger.spring.Profiles
 import org.slf4j.Marker
 import org.slf4j.event.Level
 import org.slf4j.spi.DefaultLoggingEventBuilder
@@ -47,6 +48,8 @@ class LabzenLoggingEventBuilder(
   level: Level
 ) : DefaultLoggingEventBuilder(labzenLogger, level) {
 
+  private var inProfiles: Set<String>? = null
+  private var notInProfiles: Set<String>? = null
   private var condition: Boolean = true
   private var forcedMarker: ForcedMarker? = null
   private var tagMarker: TagMarker? = null
@@ -87,6 +90,26 @@ class LabzenLoggingEventBuilder(
    */
   fun conditional(conditionSupplier: Supplier<Boolean>): LabzenLoggingEventBuilder =
     conditional(conditionSupplier.get())
+
+  /**
+   * 当前spring的profile，有任意一个是该方法指定的profile时，就输出日志；忽略大小写
+   *
+   * 例如：spring的profile是A,B，方法指定的是B,C，则输出日志
+   */
+  fun inProfile(vararg profiles: String): LabzenLoggingEventBuilder {
+    this.inProfiles = profiles.toSet()
+    return this
+  }
+
+  /**
+   * 当前spring的profile，所有的都不是该方法指定的profile时，才输出日志；忽略大小写
+   *
+   * 例如：spring的profile是A,B，方法指定的是B,C，则不输出日志；方法指定的C,D，则输出日志
+   */
+  fun notInProfile(vararg profiles: String): LabzenLoggingEventBuilder {
+    this.notInProfiles = profiles.toSet()
+    return this
+  }
 
   /**
    * 增加场景辅助标识
@@ -226,43 +249,73 @@ class LabzenLoggingEventBuilder(
     }
   }
 
+  // ===============================================================================================
+
+  private fun logEnabled(): Boolean {
+    if (forcedMarker != null) {
+      // 强制输出，不需要考虑其他条件
+      return true
+    }
+
+    if (!enabled) {
+      // 日志级别未开启，则不再考虑条件和profile
+      return false
+    }
+
+    if (!condition) {
+      return false
+    }
+
+    return if (inProfiles != null) {
+      // 当前Spring的Profile有任意一个在inProfiles中出现，则可输出日志
+      Profiles.currentProfiles.any {
+        inProfiles!!.contains(it)
+      }
+    } else if (notInProfiles != null) {
+      // 当前Spring的Profile所有都不在notInProfiles中出现，则可输出日志
+      Profiles.currentProfiles.all {
+        !notInProfiles!!.contains(it)
+      }
+    } else true
+  }
+
   override fun log() {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log()
     }
   }
 
   override fun log(message: String) {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log(message)
     }
   }
 
   override fun log(message: String, arg: Any?) {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log(message, arg)
     }
   }
 
   override fun log(message: String, arg0: Any?, arg1: Any?) {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log(message, arg0, arg1)
     }
   }
 
   override fun log(message: String, vararg args: Any?) {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log(message, *args)
     }
   }
 
   override fun log(messageSupplier: Supplier<String>) {
-    if (condition && (enabled || forcedMarker != null)) {
+    if (logEnabled()) {
       addMarkerIfNecessary()
       super.log(messageSupplier.get())
     }

@@ -1,1 +1,2 @@
 org.springframework.context.ApplicationContextInitializer=cn.labzen.logger.spring.LabzenLoggerInitializer
+org.springframework.boot.SpringApplicationRunListener=cn.labzen.logger.spring.ApplicationRunListener

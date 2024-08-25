@@ -15,7 +15,6 @@ import cn.labzen.logger.logback.LabzenLogbackLoggerContext
 import cn.labzen.logger.spring.ls.LabzenLoggingSystem
 import org.slf4j.Marker
 import org.springframework.boot.logging.*
-import org.springframework.boot.logging.logback.LogbackLoggingSystem
 import org.springframework.boot.logging.logback.LogbackLoggingSystemProperties
 import org.springframework.core.SpringProperties
 import org.springframework.core.env.ConfigurableEnvironment
@@ -55,7 +54,7 @@ class LabzenLogbackLoggingSystem(classLoader: ClassLoader) : LabzenLoggingSystem
     loggerContext.turboFilterList.remove(FILTER)
     markAsInitialized(loggerContext)
     if (StringUtils.hasText(System.getProperty(CONFIGURATION_FILE_PROPERTY))) {
-      val logger = loggerContext.getLogger(LogbackLoggingSystem::class.java.name)
+      val logger = loggerContext.getLogger(LabzenLogbackLoggingSystem::class.java.name)
       logger.warn(
         "Ignoring '$CONFIGURATION_FILE_PROPERTY' system property. Please use 'logging.config' instead."
       )
@@ -176,14 +175,15 @@ class LabzenLogbackLoggingSystem(classLoader: ClassLoader) : LabzenLoggingSystem
 
   @Throws(JoranException::class)
   private fun configureByResourceUrl(
-    initializationContext: LoggingInitializationContext?, loggerContext: LoggerContext,
+    initializationContext: LoggingInitializationContext?,
+    loggerContext: LoggerContext,
     url: URL
   ) {
     if (XML_ENABLED && url.toString().endsWith("xml")) {
-      val sbClass = Class.forName("org.springframework.boot.logging.logback.SpringBootJoranConfigurator")
-      val sbConstructor = sbClass.getDeclaredConstructor(LoggingInitializationContext::class.java)
-      sbConstructor.isAccessible = true
-      val configurator = sbConstructor.newInstance(initializationContext) as JoranConfigurator
+      val configuratorClass = Class.forName("ch.qos.logback.classic.joran.JoranConfigurator")
+      val configuratorConstructor = configuratorClass.getDeclaredConstructor()
+      configuratorConstructor.isAccessible = true
+      val configurator = configuratorConstructor.newInstance() as JoranConfigurator
       // val configurator: JoranConfigurator = SpringBootJoranConfigurator(initializationContext)
       configurator.context = loggerContext
       configurator.doConfigure(url)

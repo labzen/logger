@@ -1,7 +1,6 @@
 package cn.labzen.logger
 
 import cn.labzen.logger.kernel.LabzenLogger
-import cn.labzen.logger.spring.SpringLoggingSystemRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import sun.misc.Unsafe
@@ -48,11 +47,6 @@ object Loggers {
 
     // 隐藏因为 javassist 包做字节码操作产生的警告信息；可能放在这不是很合适，以后移出去
     disableIllegalReflectiveWarning()
-
-    // 为了兼容 Spring Boot 的 LoggingSystem.beforeInitialize() 中使用了 Slf4j 1.x 的静态类绑定能力，
-    // 造成 Caused by: java.lang.ClassNotFoundException: org.slf4j.impl.StaticLoggerBinder
-    // 通过设置 Spring Boot 的固定系统属性，将 Labzen 的兼容 LoggingSystem 注入
-    SpringLoggingSystemRegistry.registerLabzenLoggingSystem()
   }
 
   private fun detectLoggerImplements() {

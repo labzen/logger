@@ -3,6 +3,7 @@ package cn.labzen.logger
 import cn.labzen.logger.kernel.LabzenLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.helpers.Reporter
 import sun.misc.Unsafe
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -35,21 +36,15 @@ object Loggers {
    */
   @JvmStatic
   fun enhance() {
-    // 探测项目实际使用的 Log 门面实现框架，优先使用 Logback
-    detectLoggerImplements()
-
-    // 通过 javassist 字节码类编辑，将 Labzen Logger 的功能切入进去，必须在第一次创建 Logger 变量之前调用，否则会异常
-    // ServiceProviderReflectiveProcessor.reflective()
-
     // 针对 SLF4J 的 2.0.9 以后的版本，提供了 slf4j.provider 系统属性：显式指定provider类，这绕过了查找提供者的服务加载器机制，并可缩短SLF4J的初始化时间。
     // 提供定制的 provider 来增强 Logback 或 Reload4j 的功能
-    setSlf4jServiceProvider()
-
-    // 隐藏因为 javassist 包做字节码操作产生的警告信息；可能放在这不是很合适，以后移出去
-    disableIllegalReflectiveWarning()
+    explicitlySpecifiedSlf4jServiceProvider()
   }
 
-  private fun detectLoggerImplements() {
+  /**
+   * 探测项目实际使用的 Log 门面实现框架，优先使用 Logback
+   */
+  internal fun detectLoggerImplements() {
     isLogbackPresent = try {
       Class.forName("ch.qos.logback.classic.spi.LogbackServiceProvider")
       true
@@ -65,23 +60,25 @@ object Loggers {
     }
   }
 
-  private fun setSlf4jServiceProvider() {
-    if (isLogbackPresent) {
-      System.setProperty(
-        LoggerFactory.PROVIDER_PROPERTY_KEY,
-        "cn.labzen.logger.logback.LabzenLogbackServiceProvider"
-      )
-    }
-    if (isReload4jPresent) {
-      System.setProperty(
-        LoggerFactory.PROVIDER_PROPERTY_KEY,
-        "cn.labzen.logger.reload4j.LabzenReload4jServiceProvider"
-      )
-    }
+  /**
+   * 使用Property来指定Slf4j的ServiceProvider，可以避免使用SPI加载多个实例的顺序不可预期
+   */
+  private fun explicitlySpecifiedSlf4jServiceProvider() {
+    // 使用Property设置ServiceProvider时，屏蔽掉日志：Attempting to load provider ...............
+    System.setProperty(
+      Reporter.SLF4J_INTERNAL_VERBOSITY_KEY,
+      "WARN"
+    )
+    System.setProperty(
+      LoggerFactory.PROVIDER_PROPERTY_KEY,
+      "cn.labzen.logger.kernel.LabzenLoggerServiceProvider"
+    )
   }
 
   /**
    * 忽略非法反射警告 适用于jdk11
+   *
+   * 隐藏因为 javassist 包做字节码操作产生的警告信息；可能放在这不是很合适，以后移出去
    *
    * 实际输出的警告为：
    * WARNING: An illegal reflective access operation has occurred
@@ -90,7 +87,7 @@ object Loggers {
    * WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
    * WARNING: All illegal access operations will be denied in a future release
    */
-  private fun disableIllegalReflectiveWarning() {
+  internal fun disableIllegalReflectiveWarning() {
     try {
       val unsafeClass = Unsafe::class.java
       val theUnsafeField: Field = unsafeClass.getDeclaredField("theUnsafe")

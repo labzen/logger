@@ -7,13 +7,13 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>cn.labzen</groupId>
-    <version>11.9.1</version>
+    <version>11.9.2</version>
     <relativePath/>
   </parent>
 
   <artifactId>logger</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.0-RC2</version>
+  <version>1.5.0-RC3</version>
   <name>Labzen.Logger</name>
   <description>Labzen Logger - enhanced logger wrapped logback or reload4j</description>
   <url>https://github.com/labzen/logger</url>
@@ -50,7 +50,7 @@
       <dependency>
         <groupId>cn.labzen</groupId>
         <artifactId>meta</artifactId>
-        <version>1.4.1</version>
+        <version>${labzen.meta.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

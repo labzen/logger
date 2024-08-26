@@ -3,6 +3,7 @@ package cn.labzen.logger.meta
 import cn.labzen.logger.kotlin.logger
 import cn.labzen.meta.Labzens
 import cn.labzen.meta.component.bean.Component
+import cn.labzen.meta.component.bean.Information
 
 internal object LabzenMetaPrinter {
 
@@ -37,6 +38,7 @@ internal object LabzenMetaPrinter {
     println("$k█$e")
 
     val infos = Labzens.components().values.map(Component::information)
+      .sortedBy { information: Information -> information.title }
     if (infos.isEmpty()) {
       println("$k█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄$e")
       println()

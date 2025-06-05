@@ -7,13 +7,13 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>cn.labzen</groupId>
-    <version>11.9.5</version>
+    <version>11.9.7</version>
     <relativePath/>
   </parent>
 
   <artifactId>logger</artifactId>
   <packaging>jar</packaging>
-  <version>1.5.1</version>
+  <version>1.5.2</version>
   <name>Labzen.Logger</name>
   <description>Labzen Logger - enhanced logger wrapped logback or reload4j</description>
   <url>https://github.com/labzen/logger</url>
@@ -46,7 +46,7 @@
   </scm>
 
   <properties>
-    <labzen.meta.version>1.4.4</labzen.meta.version>
+    <labzen.meta.version>1.4.5</labzen.meta.version>
   </properties>
 
   <dependencyManagement>
@@ -110,41 +110,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>https://repo1.maven.org/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>aliyun-public</id>
-      <url>https://maven.aliyun.com/repository/public</url>
-    </repository>
-    <repository>
-      <id>aliyun-central</id>
-      <url>https://maven.aliyun.com/repository/central</url>
-    </repository>
-    <repository>
-      <id>aliyun-spring</id>
-      <url>https://maven.aliyun.com/repository/spring</url>
-    </repository>
-    <repository>
-      <id>activiti-releases</id>
-      <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>central</id>
-      <url>https://repo1.maven.org/maven2</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>

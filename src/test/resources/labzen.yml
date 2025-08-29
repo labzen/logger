@@ -1,4 +1,2 @@
-labzen:
-  logger:
-    level:
-      root: info
+logger:
+  print-meta: true

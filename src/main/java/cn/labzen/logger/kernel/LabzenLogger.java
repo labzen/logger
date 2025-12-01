@@ -38,7 +38,7 @@ public class LabzenLogger implements Logger, LoggingEventAware {
     return messagePrefix;
   }
 
-  public void log(LoggingEvent event) {
+  public synchronized void log(LoggingEvent event) {
     String preprocessedMessage = mergeMarkersAndKeyValuePairs(event, event.getMessage());
 
     if (changeMessagePrefixAfter) {

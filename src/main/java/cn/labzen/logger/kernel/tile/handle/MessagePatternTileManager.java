@@ -26,6 +26,7 @@ public final class MessagePatternTileManager {
 
   public static String transform(String pattern, List<Object> args) {
     List<PlaceholderWrapper> found = PLACEHOLDERS.get(pattern);
+    assert found != null;
     return formatMessage(pattern, found, args);
   }
 

@@ -1,6 +1,7 @@
 package cn.labzen.logger.spring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class Profiles {
@@ -19,7 +20,7 @@ public final class Profiles {
   }
 
   public static List<String> currentProfiles() {
-    return currentProfiles;
+    return Collections.unmodifiableList(currentProfiles);
   }
 
   static void setCurrentProfiles(List<String> profiles) {

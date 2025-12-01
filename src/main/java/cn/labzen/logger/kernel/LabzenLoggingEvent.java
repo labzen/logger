@@ -50,15 +50,13 @@ public class LabzenLoggingEvent extends DefaultLoggingEvent {
   }
 
   private String genCodeMessage(String message) {
-    return message +
-           "\n" +
-           FRAME_LINE_START_PREFIX +
-           codeType.getText() +
-           FRAME_LINE_START_SUFFIX +
-           "\n" +
-           formatCodeText() +
-           "\n" +
-           FRAME_LINE_END;
+    return String.format("%s\n%s%s%s\n%s\n%s",
+        message,
+        FRAME_LINE_START_PREFIX,
+        codeType.getText(),
+        FRAME_LINE_START_SUFFIX,
+        formatCodeText(),
+        FRAME_LINE_END);
   }
 
   private String formatCodeText() {

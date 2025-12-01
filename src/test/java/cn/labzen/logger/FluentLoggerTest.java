@@ -187,9 +187,10 @@ public class FluentLoggerTest {
   @Test
   void testPrefixMessage() {
     logger.atInfo().startPrefix(" --- ").log("接下来的日志会有前缀");
-      logger.atInfo().scene(Scenes.LISTENER).log("第 {} 条日志", 1);
-      logger.atWarn().scene(Scenes.FILTER).status(Status.FIXME).log("第 {} 条日志", 2);
-      logger.atDebug().log("第 {} 条日志", 3);
+    logger.atInfo().scene(Scenes.LISTENER).log("第 {} 条日志", 1);
+    logger.atWarn().scene(Scenes.FILTER).status(Status.FIXME).log("第 {} 条日志", 2);
+    logger.atWarn().scene(Scenes.JOB).status(Status.NOTE).tags("Labzen").log("第 {} 条日志", 3);
+    logger.atDebug().log("第 {} 条日志", 4);
     logger.atInfo().endPrefix(true).log("带有前缀的日志结束了");
   }
 

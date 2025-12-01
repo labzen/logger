@@ -1,5 +1,7 @@
 package cn.labzen.logger.kernel.marker;
 
+import cn.labzen.logger.meta.LoggerConfiguration;
+import cn.labzen.meta.Labzens;
 import org.slf4j.Marker;
 
 import java.util.ArrayList;
@@ -7,12 +9,19 @@ import java.util.List;
 
 public class MarkerWrapper extends AbstractLimitedMarker {
 
+  private static String tailed;
+
   private final ForcedMarker forced;
   private final SceneMarker scene;
   private final StatusMarker status;
   private final TagMarker tag;
 
   private List<Marker> references;
+
+  static {
+    LoggerConfiguration configuration = Labzens.configurationWith(LoggerConfiguration.class);
+    MarkerWrapper.tailed = configuration.markerTailed();
+  }
 
   public MarkerWrapper(ForcedMarker forced, SceneMarker scene, StatusMarker status, TagMarker tag) {
     this.forced = forced;
@@ -67,6 +76,6 @@ public class MarkerWrapper extends AbstractLimitedMarker {
     if (result.isBlank()) {
       return result;
     }
-    return result + ">> ";
+    return result + tailed;
   }
 }

@@ -6,6 +6,9 @@ import cn.labzen.logger.kernel.tile.handle.MessagePatternTileManager;
 import org.slf4j.event.DefaultLoggingEvent;
 import org.slf4j.event.Level;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import static ch.qos.logback.core.util.StringUtil.nullStringToEmpty;
 
 public class LabzenLoggingEvent extends DefaultLoggingEvent {
@@ -15,8 +18,6 @@ public class LabzenLoggingEvent extends DefaultLoggingEvent {
   private static final String FRAME_LINE_START_SUFFIX = " ====== ─────────────────────────────────────────────────────────────────";
   private static final String FRAME_PREFIX = "│ ";
   private static final String FRAME_LINE_END = "└───────────────────────────────────────────────────────────────────────────────────────────────────────";
-  private static final String FRAME_PREFIX_WITH_CRLF = LINE_SEPARATOR + "  │ ";
-  private static final String LAST_CRLF_REGEX = LINE_SEPARATOR + "$";
 
   private final LabzenLogger logger;
 
@@ -50,14 +51,13 @@ public class LabzenLoggingEvent extends DefaultLoggingEvent {
 
   private String genCodeMessage(String message) {
     return message +
-           "\n  " +
+           "\n" +
            FRAME_LINE_START_PREFIX +
            codeType.getText() +
            FRAME_LINE_START_SUFFIX +
-           "\n  " +
-           FRAME_PREFIX +
+           "\n" +
            formatCodeText() +
-           "\n  " +
+           "\n" +
            FRAME_LINE_END;
   }
 
@@ -66,6 +66,9 @@ public class LabzenLoggingEvent extends DefaultLoggingEvent {
       return "";
     }
 
-    return codeText.replaceAll(LAST_CRLF_REGEX, "").replaceAll(LINE_SEPARATOR, FRAME_PREFIX_WITH_CRLF);
+    return Arrays.stream(codeText.split("\\R"))
+                 .map(line -> FRAME_PREFIX + line)
+                 .collect(Collectors.joining(LINE_SEPARATOR));
+    //return codeText.replaceAll(LAST_CRLF_REGEX, "").replaceAll(LINE_SEPARATOR, FRAME_PREFIX_WITH_CRLF);
   }
 }

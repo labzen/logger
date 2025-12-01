@@ -6,6 +6,15 @@ import cn.labzen.meta.configuration.annotation.Item;
 @Configured(namespace = "logger")
 public interface LoggerConfiguration {
 
-  @Item(path = "print-meta", required = false, defaultValue = "false")
-  boolean printMetaInformation();
+  @Item(path = "print-banner", required = false, defaultValue = "true")
+  boolean printBanner();
+
+  @Item(path = "print-project-info", required = false, defaultValue = "true")
+  boolean printProjectInformation();
+
+  @Item(path = "print-system-info", required = false, defaultValue = "false")
+  boolean printSystemInformation();
+
+  @Item(path = "marker-tailed", required = false, defaultValue = " - ")
+  String markerTailed();
 }

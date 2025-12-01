@@ -1,8 +1,6 @@
 package cn.labzen.logger.spring;
 
-import cn.labzen.logger.meta.LoggerConfiguration;
 import cn.labzen.logger.print.MetaPrinter;
-import cn.labzen.meta.Labzens;
 import cn.labzen.meta.spring.SpringInitializationOrder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,11 +20,6 @@ public class LabzenLoggerInitializer implements ApplicationContextInitializer<Co
 
   @Override
   public void initialize(@Nonnull ConfigurableApplicationContext applicationContext) {
-    LoggerConfiguration configuration = Labzens.configurationWith(LoggerConfiguration.class);
-
-    // 打印 Labzen 模组信息
-    if (configuration != null && configuration.printMetaInformation()) {
-      MetaPrinter.print();
-    }
+    MetaPrinter.print();
   }
 }

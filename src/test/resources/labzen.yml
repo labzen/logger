@@ -1,2 +1,4 @@
 logger:
-  print-meta: true
+  print-banner: true
+  print-project-info: true
+  print-system-info: true

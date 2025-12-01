@@ -79,7 +79,9 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
 
   public LabzenLoggingEventBuilder(LabzenLogger logger, Level level) {
     super(logger, level);
+
     this.enabled = switch (level) {
+      case null -> false;
       case TRACE -> logger.isTraceEnabled();
       case DEBUG -> logger.isDebugEnabled();
       case INFO -> logger.isInfoEnabled();

@@ -2,34 +2,52 @@ package cn.labzen.logger.print;
 
 import cn.labzen.logger.Loggers;
 import cn.labzen.logger.kernel.LabzenLogger;
+import cn.labzen.logger.meta.LoggerConfiguration;
 import cn.labzen.meta.Labzens;
 import cn.labzen.meta.component.bean.ComponentMeta;
 import cn.labzen.meta.component.bean.Information;
 import cn.labzen.meta.system.SystemInformation;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MetaPrinter {
 
   private static final LabzenLogger logger = Loggers.getLogger(MetaPrinter.class);
+  private static final String LABZEN_TEXT = "Labzen";
 
   public static void print() {
-    printLogoAndComponents();
-    printSystemInformation();
+    LoggerConfiguration configuration = Labzens.configurationWith(LoggerConfiguration.class);
+    assert configuration != null;
+
+    // 打印 Labzen 模组信息
+    if (configuration.printBanner()) {
+      printBannerAndComponents();
+    }
+
+    if (configuration.printProjectInformation()) {
+      printProjectInformation();
+    }
+
+    // 打印系统硬件信息
+    if (configuration.printSystemInformation()) {
+      printSystemInformation();
+    }
   }
 
-  private static void printLogoAndComponents() {
+  private static void printBannerAndComponents() {
     String e = "\u001B[0m";
     String k = "\u001B[38;5;214m";
     String h = "\u001B[38;5;179m";
     String t = "\u001B[38;5;184m";
 
-    logger.info("正在使用 'Labzen' 组件包..");
     System.out.println();
-    System.out.printf("%s█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀%s%n", k, e);
+    System.out.printf(
+        "%s█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀%s%n",
+        k,
+        e);
     System.out.printf("%s█%s%n", k, e);
     System.out.printf("%s█%s  %s ██▓      ▄▄▄        ▄▄▄▄    ▒███████▒ ▓██████ ███▄     █%s%n", k, e, h, e);
     System.out.printf("%s█%s  %s ██▒     ▒████▄     ▓█████▄  ░ ▒   ▄▀░ ▓█    ▀ ██ ▀█   ██%s%n", k, e, h, e);
@@ -68,8 +86,31 @@ public class MetaPrinter {
           versionWithColor,
           info.description());
     }
-    System.out.printf("%s█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄%s%n", k, e);
+    System.out.printf(
+        "%s█▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄%s%n",
+        k,
+        e);
     System.out.println();
+  }
+
+  private static void printProjectInformation() {
+    logger.atInfo().scene(LABZEN_TEXT).log("正在使用 'Labzen' 组件包...");
+
+    List<Information> infos = Labzens.getComponentMetas()
+                                     .values()
+                                     .stream()
+                                     .map(ComponentMeta::information)
+                                     .sorted(Comparator.comparing(Information::title))
+                                     .toList();
+    for (Information info : infos) {
+      logger.atInfo().scene(LABZEN_TEXT).log("  component {}:{} loaded", info.title(), info.version());
+    }
+
+    RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+    logger.atInfo().scene(LABZEN_TEXT).log("JVM启动输入参数：{}", String.join(" ", runtimeMXBean.getInputArguments()));
+    logger.atInfo()
+          .scene(LABZEN_TEXT)
+          .log("JVM名称：{}, version {}", runtimeMXBean.getName(), runtimeMXBean.getSpecVersion());
   }
 
   private static void printSystemInformation() {
@@ -91,15 +132,8 @@ public class MetaPrinter {
     int nameMaxLength = systemInformationList.stream().mapToInt(si -> si.name().length()).max().orElse(20);
     String nameFormatPattern = "%-" + nameMaxLength + "s";
 
-    logger.info("检测到当前主机信息：");
+    System.out.println(" === 检测到当前主机信息 ===");
 
-    //Map<String, Integer> titleMaxLengthByCatalog = systemInformationList.stream()
-    //                                                                    .collect(Collectors.groupingBy(SystemInformation::catalog,
-    //                                                                        Collectors.collectingAndThen(Collectors.maxBy(
-    //                                                                                Comparator.comparingInt(info -> info.title()
-    //                                                                                                                    .length())),
-    //                                                                            opt -> opt.map(x -> x.title().length())
-    //                                                                                      .orElse(0))));
     String latestCatalog = "";
     int ci = 0;
     for (int i = 0; i < systemInformationList.size(); i++) {
@@ -114,10 +148,6 @@ public class MetaPrinter {
         latestCatalog = currentCatalog;
         ci = ci ^ 1;
       }
-
-      //Integer titleMaxLength = titleMaxLengthByCatalog.get(currentCatalog);
-      //String titleFormatPattern = "%-" + titleMaxLength + "s";
-      //String titleString = String.format(titleFormatPattern, info.title());
 
       System.out.printf("%s♎ %s %s[ %s :: %s ]%s %s  >>>  %s%n",
           b,

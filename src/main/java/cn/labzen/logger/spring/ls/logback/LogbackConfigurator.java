@@ -37,13 +37,16 @@ public class LogbackConfigurator {
     Assert.notNull(converterClass, "Converter class must not be null");
 
     Object obj = context.getObject(CoreConstants.PATTERN_RULE_REGISTRY);
-    Map<String, String> registry;
+    Map<String, String> registry = null;
     try {
       registry = (Map<String, String>) obj;
-    } catch (Exception e) {
-      registry = new HashMap<>();
-      context.putObject(CoreConstants.PATTERN_RULE_REGISTRY, obj);
+    } catch (Exception ignored) {
     }
+    if (registry == null) {
+      registry = new HashMap<>();
+      context.putObject(CoreConstants.PATTERN_RULE_REGISTRY, registry);
+    }
+
     registry.put(conversionWord, converterClass.getName());
   }
 

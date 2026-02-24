@@ -1,2 +1,4 @@
 - logback 配置文件的增强，或补充、简化
 - 给 scene, tag, status 增加颜色输出
+- 打印堆栈信息
+- 配置logback.xml时，如果要获取method和line行号，会是错误的，应该是这个 组件哪里影响了最终的结果

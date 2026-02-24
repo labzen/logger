@@ -30,15 +30,16 @@ public class LabzenLogbackServiceProvider extends LogbackServiceProvider {
   private void enhancePatternLayout() {
     // 加入自定义 Conversion Word
     // 重新分配色彩的日志级别
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("showy", HighlighterConverter.class.getName());
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("highlighter", HighlighterConverter.class.getName());
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("showy", HighlighterConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("highlighter", HighlighterConverter::new);
     // 更短的logger类显示，暂时不建议使用
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("briefLogger", IdentifiableLoggerConverter.class.getName());
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("brief", IdentifiableLoggerConverter.class.getName());
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("bl", IdentifiableLoggerConverter.class.getName());
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("briefLogger", IdentifiableLoggerConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("brief", IdentifiableLoggerConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("bl", IdentifiableLoggerConverter::new);
     // 更直观的异常显示
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("thrown", IndentedThrowableProxyConverter.class.getName());
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("newEx", IndentedThrowableProxyConverter.class.getName());
-    PatternLayout.DEFAULT_CONVERTER_MAP.put("newException", IndentedThrowableProxyConverter.class.getName());
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("thrown", IndentedThrowableProxyConverter::new);
+    // todo 下面这两个可能有什么问题，还需要再验证，暂时先注掉
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newEx", IndentedThrowableProxyConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newException", IndentedThrowableProxyConverter::new);
   }
 }

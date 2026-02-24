@@ -134,7 +134,11 @@ public class DefaultLogbackConfiguration {
   }
 
   private Charset resolveCharset(LogbackConfigurator config, String value) throws ScanException {
-    return Charset.forName(resolve(config, value));
+    try {
+      return Charset.forName(resolve(config, value));
+    } catch (Exception ex) {
+      return Charset.defaultCharset();
+    }
   }
 
   private String resolve(LogbackConfigurator config, String value) throws ScanException {

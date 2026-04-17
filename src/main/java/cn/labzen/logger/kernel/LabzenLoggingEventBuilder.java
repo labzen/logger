@@ -65,18 +65,42 @@ import java.util.function.Supplier;
  */
 public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
 
+  /** 日志级别是否启用 */
   private final boolean enabled;
+
+  /** 关联的LabzenLogger实例 */
   private final LabzenLogger labzenLogger;
+
+  /** 关联的日志事件对象 */
   private final LabzenLoggingEvent labzenLoggingEvent;
 
+  /** 包含的Profile白名单 */
   private Set<String> inProfiles;
+
+  /** 排除的Profile黑名单 */
   private Set<String> outProfiles;
+
+  /** 条件标志，false时不打印日志（除非force） */
   private boolean conditional = true;
+
+  /** 强制打印标记 */
   private ForcedMarker forcedMarker;
+
+  /** 场景标记 */
   private SceneMarker sceneMarker;
+
+  /** 状态标记 */
   private StatusMarker statusMarker;
+
+  /** 标签标记 */
   private TagMarker tagMarker;
 
+  /**
+   * 构造方法
+   *
+   * @param logger 日志器实例
+   * @param level  日志级别
+   */
   public LabzenLoggingEventBuilder(LabzenLogger logger, Level level) {
     super(logger, level);
 
@@ -95,7 +119,11 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 强制打印日志，忽略日志级别；如果condition为false，也会打印，即不论其他任何条件，只要强制就会打印
+   * 强制打印日志，忽略日志级别限制
+   *
+   * <p>即使日志级别被禁用（如生产环境DEBUG被禁用），只要force就会打印
+   *
+   * @return 当前Builder，支持链式调用
    */
   public LabzenLoggingEventBuilder force() {
     this.forcedMarker = new ForcedMarker();
@@ -103,7 +131,10 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 日志输出条件，当条件不成立时，不打印日志
+   * 设置日志输出条件
+   *
+   * @param value true-允许打印，false-禁止打印
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder conditional(boolean value) {
     this.conditional = value;
@@ -111,17 +142,22 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 日志输出条件，当条件不成立时，不打印日志
+   * 设置日志输出条件（延迟计算）
+   *
+   * @param supplier 条件提供者，用于延迟执行避免不必要的计算
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder conditional(Supplier<Boolean> supplier) {
     return conditional(supplier.get());
   }
 
   /**
-   * 当前spring的profile，有任意一个是该方法指定的profile时，就输出日志；忽略大小写；比{@link #conditional(boolean)}有效级低，
-   * 即 conditional=false 时，不会判断profile
-   * <p>
-   * 例如：spring的profile是A,B，方法指定的是B,C，则输出日志
+   * 设置白名单Profile
+   *
+   * <p>当Spring的active profiles中任意一个匹配时输出日志，大小写不敏感
+   *
+   * @param profiles Profile名称数组
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder inProfile(String... profiles) {
     this.inProfiles = Set.of(profiles);
@@ -129,10 +165,12 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 当前spring的profile，所有的都不是该方法指定的profile时，才输出日志；忽略大小写；比{@link #conditional(boolean)}有效级低，
-   * 即 conditional=false 时，不会判断profile
-   * <p>
-   * 例如：spring的profile是A,B，方法指定的是B,C，则不输出日志；方法指定的C,D，则输出日志
+   * 设置黑名单Profile
+   *
+   * <p>当Spring的active profiles中所有都不匹配时输出日志，大小写不敏感
+   *
+   * @param profiles 排除的Profile名称数组
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder outProfile(String... profiles) {
     this.outProfiles = Set.of(profiles);
@@ -140,14 +178,20 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 增加场景辅助标识
+   * 添加场景标识（枚举方式）
+   *
+   * @param scene 场景枚举
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder scene(Scenes scene) {
     return scene(scene.name());
   }
 
   /**
-   * 增加场景辅助标识
+   * 添加场景标识
+   *
+   * @param scene 场景名称
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder scene(String scene) {
     this.sceneMarker = new SceneMarker(scene);
@@ -155,7 +199,10 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 增加状态辅助标识
+   * 添加状态标识（枚举方式）
+   *
+   * @param status 状态枚举
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder status(Status status) {
     this.statusMarker = new StatusMarker(status.getText());
@@ -163,7 +210,10 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 增加状态辅助标识
+   * 添加状态标识
+   *
+   * @param status 状态文本
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder status(String status) {
     this.statusMarker = new StatusMarker(status);
@@ -171,14 +221,20 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 对日志加标签
+   * 添加标签（可变参数方式）
+   *
+   * @param tags 标签数组
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder tags(String... tags) {
     return tags(List.of(tags));
   }
 
   /**
-   * 对日志加标签
+   * 添加标签
+   *
+   * @param tags 标签列表
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder tags(List<String> tags) {
     this.tagMarker = new TagMarker(tags);
@@ -187,42 +243,47 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
 
   /**
    * 对日志打印计数，可配合tag与scene做区分计数
-   * <p>
-   * **!! 暂未实现 !!**
+   *
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder counting() {
     return this;
   }
 
   /**
-   * 提供阶段性日志，整个阶段过程中，可统计执行时长等信息
-   * <p>
-   * **!! 暂未实现 !!**
+   * 标记阶段性日志开始
+   *
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder phaseStart() {
     return this;
   }
 
   /**
-   * 提供阶段性日志，整个阶段过程中，可统计执行时长等信息
-   * <p>
-   * **!! 暂未实现 !!**
+   * 标记阶段性日志暂停
+   *
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder phasePause() {
     return this;
   }
 
   /**
-   * 提供阶段性日志，整个阶段过程中，可统计执行时长等信息
-   * <p>
-   * **!! 暂未实现 !!**
+   * 标记阶段性日志结束
+   *
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder phaseEnd() {
     return this;
   }
 
   /**
-   * 打印JSON数据
+   * 设置打印内容为JSON格式
+   *
+   * <p>会在输出时添加JSON边框装饰
+   *
+   * @param text JSON文本
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder json(String text) {
     labzenLoggingEvent.setCodeType(CodeTypes.JSON);
@@ -231,7 +292,12 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 打印XML数据
+   * 设置打印内容为XML格式
+   *
+   * <p>会在输出时添加XML边框装饰
+   *
+   * @param text XML文本
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder xml(String text) {
     labzenLoggingEvent.setCodeType(CodeTypes.XML);
@@ -240,7 +306,12 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 打印YAML数据
+   * 设置打印内容为YAML格式
+   *
+   * <p>会在输出时添加YAML边框装饰
+   *
+   * @param text YAML文本
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder yaml(String text) {
     labzenLoggingEvent.setCodeType(CodeTypes.YAML);
@@ -249,19 +320,21 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 给当前logger的每条日志，从下一行开始加上前缀
+   * 开始消息前缀（从下一行生效）
    *
    * @param prefix 前缀字符
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder startPrefix(String prefix) {
     return startPrefix(prefix, false);
   }
 
   /**
-   * 给当前logger的每条日志，加上前缀
+   * 开始消息前缀
    *
    * @param prefix 前缀字符
-   * @param now    true - 从当前日志开始，false - 从下一行开始
+   * @param now    true-立即生效（当前日志开始），false-延迟生效（下一行开始）
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder startPrefix(String prefix, boolean now) {
     labzenLogger.startMessagePrefix(prefix, now);
@@ -269,16 +342,19 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   }
 
   /**
-   * 从下一行开始结束logger打印日志时加的前缀
+   * 结束消息前缀（从下一行生效）
+   *
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder endPrefix() {
     return endPrefix(false);
   }
 
   /**
-   * 结束logger打印日志时加的前缀
+   * 结束消息前缀
    *
-   * @param now true - 从当前日志开始，false -
+   * @param now true-立即停止，false-延迟停止（从下一行开始）
+   * @return 当前Builder
    */
   public LabzenLoggingEventBuilder endPrefix(boolean now) {
     labzenLogger.endMessagePrefix(now);
@@ -287,12 +363,32 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
 
   // ===============================================================================================
 
+  /**
+   * 必要时添加Marker
+   *
+   * <p>当存在forced/scene/status/tag任一Marker时，包装并添加到事件
+   */
   public void addMarkerIfNecessary() {
     if (forcedMarker != null || sceneMarker != null || statusMarker != null || tagMarker != null) {
       addMarker(new MarkerWrapper(forcedMarker, sceneMarker, statusMarker, tagMarker));
     }
   }
 
+  /**
+   * 判断日志是否应该输出
+   *
+   * <p>判断优先级：
+   * <ol>
+   *   <li>forcedMarker存在 → 直接输出</li>
+   *   <li>日志级别未启用 → 不输出</li>
+   *   <li>conditional=false → 不输出</li>
+   *   <li>inProfiles匹配 → 输出</li>
+   *   <li>outProfiles不匹配 → 输出</li>
+   *   <li>其他 → 不输出</li>
+   * </ol>
+   *
+   * @return true表示应该输出日志
+   */
   private boolean logEnabled() {
     if (forcedMarker != null) {
       // 强制输出，不需要考虑其他条件
@@ -319,6 +415,9 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志（无消息）
+   */
   @Override
   public void log() {
     if (logEnabled()) {
@@ -327,6 +426,11 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志
+   *
+   * @param message 消息文本
+   */
   public void log(String message) {
     if (logEnabled()) {
       addMarkerIfNecessary();
@@ -334,6 +438,12 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志（带1个参数）
+   *
+   * @param message 消息模板
+   * @param arg     参数
+   */
   public void log(String message, Object arg) {
     if (logEnabled()) {
       addMarkerIfNecessary();
@@ -341,6 +451,13 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志（带2个参数）
+   *
+   * @param message 消息模板
+   * @param arg0    参数1
+   * @param arg1    参数2
+   */
   public void log(String message, Object arg0, Object arg1) {
     if (logEnabled()) {
       addMarkerIfNecessary();
@@ -348,6 +465,12 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志（带可变参数）
+   *
+   * @param message 消息模板
+   * @param args    参数数组
+   */
   public void log(String message, Object... args) {
     if (logEnabled()) {
       addMarkerIfNecessary();
@@ -355,6 +478,11 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
     }
   }
 
+  /**
+   * 输出日志（消息延迟计算）
+   *
+   * @param messageSupplier 消息提供者
+   */
   public void log(Supplier<String> messageSupplier) {
     if (logEnabled()) {
       addMarkerIfNecessary();

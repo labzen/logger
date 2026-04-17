@@ -11,43 +11,125 @@ import org.slf4j.spi.LoggingEventBuilder;
 
 import java.util.function.Supplier;
 
+/**
+ * Labzen日志增强器，包装底层Logger实现（如Logback/Reload4j）并提供增强功能。
+ *
+ * <p>本类实现了以下功能：
+ * <ul>
+ *   <li>消息前缀管理 - 支持在日志输出前后添加前缀标记</li>
+ *   <li>Marker合并 - 将多个Marker和KeyValuePair合并到消息中</li>
+ *   <li>Fluent API - 支持链式调用风格的日志构建</li>
+ *   <li>Supplier支持 - 支持延迟计算日志内容的函数式接口</li>
+ * </ul>
+ */
 public class LabzenLogger implements Logger, LoggingEventAware {
 
+  /**
+   * 底层的Logger实现，所有日志操作最终委托给它
+   */
   private final Logger principal;
+
+  /**
+   * 消息前缀字符串，用于在每条日志消息前添加统一前缀
+   */
   private String messagePrefix;
+
+  /**
+   * 前缀是否生效标志，配合changeMessagePrefixAfter实现延迟生效
+   */
   private boolean messagePrefixEnabled = false;
+
+  /**
+   * 延迟切换前缀状态标志，用于实现"从下一条日志开始生效"的语义
+   * <p>true表示下一次log()调用后需要切换messagePrefixEnabled状态
+   */
   private boolean changeMessagePrefixAfter = false;
 
+  /**
+   * 构造方法，传入底层Logger实现
+   *
+   * @param principal 底层Logger实现，不能为null
+   */
   public LabzenLogger(Logger principal) {
     this.principal = principal;
   }
 
+  /**
+   * 开始消息前缀，支持立即生效或延迟到下一条日志生效
+   *
+   * <p>立即生效模式(immediately=true)：
+   * <ul>
+   *   <li>当前日志开始即添加前缀</li>
+   *   <li>changeMessagePrefixAfter设为false</li>
+   * </ul>
+   *
+   * <p>延迟生效模式(immediately=false)：
+   * <ul>
+   *   <li>下一条日志开始才添加前缀</li>
+   *   <li>changeMessagePrefixAfter设为true，在log()中切换状态</li>
+   * </ul>
+   *
+   * @param prefix      前缀字符串
+   * @param immediately true-立即生效，false-下一条日志开始生效
+   */
   public void startMessagePrefix(String prefix, boolean immediately) {
     messagePrefix = prefix;
     messagePrefixEnabled = immediately;
     changeMessagePrefixAfter = !immediately;
   }
 
+  /**
+   * 结束消息前缀，支持立即生效或延迟到下一条日志生效
+   *
+   * <p>语义与{@link #startMessagePrefix(String, boolean)}相反
+   *
+   * @param immediately true-立即停止，false-下一条日志开始停止
+   */
   public void endMessagePrefix(boolean immediately) {
     messagePrefix = null;
     messagePrefixEnabled = !immediately;
     changeMessagePrefixAfter = !immediately;
   }
 
+  /**
+   * 获取当前配置的消息前缀
+   *
+   * @return 前缀字符串，可能为null
+   */
   public String getMessagePrefix() {
     return messagePrefix;
   }
 
+  /**
+   * 核心日志处理方法，实现{@link LoggingEventAware}接口
+   *
+   * <p>处理流程：
+   * <ol>
+   *   <li>获取原始消息，并通过MessageFormatter处理占位符</li>
+   *   <li>合并Markers到消息前缀中</li>
+   *   <li>追加KeyValuePairs到消息末尾</li>
+   *   <li>处理延迟的前缀状态切换</li>
+   *   <li>根据日志级别调用对应的principal方法</li>
+   * </ol>
+   *
+   * <p>注意：此方法已同步，防止并发修改messagePrefixEnabled状态
+   *
+   * @param event SLF4J的LoggingEvent事件对象
+   */
   public synchronized void log(LoggingEvent event) {
+    // 1. 获取并预处理消息：合并Markers、处理占位符、追加KeyValuePairs
     String preprocessedMessage = mergeMarkersAndKeyValuePairs(event, event.getMessage());
 
+    // 2. 处理延迟前缀切换：如果设置了changeMessagePrefixAfter，则在本次log后切换状态
     if (changeMessagePrefixAfter) {
       changeMessagePrefixAfter = false;
       messagePrefixEnabled = !messagePrefixEnabled;
     }
 
+    // 3. 检查是否有异常需要一起记录
     boolean hasException = event.getThrowable() != null;
 
+    // 4. 根据日志级别分发到对应的principal方法
     switch (event.getLevel()) {
       case INFO -> {
         if (hasException) {
@@ -84,6 +166,7 @@ public class LabzenLogger implements Logger, LoggingEventAware {
           principal.trace(preprocessedMessage);
         }
       }
+      // 当level为null时，默认降级为INFO级别
       case null -> {
         if (hasException) {
           principal.info(preprocessedMessage, event.getThrowable());
@@ -95,19 +178,35 @@ public class LabzenLogger implements Logger, LoggingEventAware {
   }
 
   /**
-   * Prepend markers and key-value pairs to the message.
+   * 合并Markers和KeyValuePairs到消息中
+   *
+   * <p>消息格式：[markers...] [formatted_message] [key=value]...
+   *
+   * <p>实现细节：
+   * <ul>
+   *   <li>Markers通过调用其toString()追加到消息开头</li>
+   *   <li>消息占位符通过MessageFormatter.arrayFormat处理</li>
+   *   <li>KeyValuePairs以key=value格式追加到消息末尾</li>
+   * </ul>
+   *
+   * @param event   日志事件对象，包含markers和key-value pairs
+   * @param message 原始消息模板
+   * @return 预处理后的完整消息字符串
    */
   private String mergeMarkersAndKeyValuePairs(LoggingEvent event, String message) {
     StringBuilder sb = new StringBuilder();
 
+    // 1. 追加所有Markers
     if (event.getMarkers() != null) {
       for (Marker marker : event.getMarkers()) {
         sb.append(marker).append(" ");
       }
     }
 
+    // 2. 追加格式化后的消息内容（处理{}占位符）
     sb.append(MessageFormatter.arrayFormat(message, event.getArgumentArray()).getMessage());
 
+    // 3. 追加所有KeyValuePairs
     if (event.getKeyValuePairs() != null) {
       for (KeyValuePair pair : event.getKeyValuePairs()) {
         sb.append(pair.key).append("=").append(pair.value).append(" ");

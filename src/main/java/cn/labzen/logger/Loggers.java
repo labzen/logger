@@ -45,10 +45,24 @@ public final class Loggers {
     );
   }
 
+  /**
+   * 根据名称获取增强版Logger实例
+   *
+   * @param name Logger名称，通常使用类名或业务模块名
+   * @return LabzenLogger增强版日志器
+   */
   public static LabzenLogger getLogger(String name) {
     return (LabzenLogger) LoggerFactory.getLogger(name);
   }
 
+  /**
+   * 根据类获取增强版Logger实例
+   *
+   * <p>推荐使用此方法，自动以类的完全限定名作为Logger名称
+   *
+   * @param clazz 日志器所属的类
+   * @return LabzenLogger增强版日志器
+   */
   public static LabzenLogger getLogger(Class<?> clazz) {
     return (LabzenLogger) LoggerFactory.getLogger(clazz);
   }

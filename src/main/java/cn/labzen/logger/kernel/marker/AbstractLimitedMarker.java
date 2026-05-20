@@ -2,6 +2,7 @@ package cn.labzen.logger.kernel.marker;
 
 import org.slf4j.Marker;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -25,13 +26,11 @@ import java.util.Iterator;
 public abstract class AbstractLimitedMarker implements Marker {
 
   /**
-   * 不支持的方法：获取Marker名称
-   *
-   * @throws IllegalStateException 总是抛出
+   * 不支持的方法：返回空的Marker名称
    */
   @Override
   public String getName() {
-    throw new IllegalStateException("unnecessary method");
+    return "";
   }
 
   /**
@@ -41,7 +40,7 @@ public abstract class AbstractLimitedMarker implements Marker {
    */
   @Override
   public void add(Marker reference) {
-    throw new IllegalStateException("unnecessary method");
+    // no-op: 不支持子Marker层级结构
   }
 
   /**
@@ -51,7 +50,7 @@ public abstract class AbstractLimitedMarker implements Marker {
    */
   @Override
   public boolean remove(Marker reference) {
-    throw new IllegalStateException("unnecessary method");
+    return false;
   }
 
   /**
@@ -81,7 +80,7 @@ public abstract class AbstractLimitedMarker implements Marker {
    */
   @Override
   public Iterator<Marker> iterator() {
-    throw new IllegalStateException("unnecessary method");
+    return Collections.emptyIterator();
   }
 
   /**
@@ -91,7 +90,7 @@ public abstract class AbstractLimitedMarker implements Marker {
    */
   @Override
   public boolean contains(Marker other) {
-    throw new IllegalStateException("unnecessary method");
+    return false;
   }
 
   /**
@@ -101,6 +100,6 @@ public abstract class AbstractLimitedMarker implements Marker {
    */
   @Override
   public boolean contains(String name) {
-    throw new IllegalStateException("unnecessary method");
+    return false;
   }
 }

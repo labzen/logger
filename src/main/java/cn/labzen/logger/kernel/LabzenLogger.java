@@ -72,7 +72,7 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param prefix      前缀字符串
    * @param immediately true-立即生效，false-下一条日志开始生效
    */
-  public void startMessagePrefix(String prefix, boolean immediately) {
+  public synchronized void startMessagePrefix(String prefix, boolean immediately) {
     messagePrefix = prefix;
     messagePrefixEnabled = immediately;
     changeMessagePrefixAfter = !immediately;
@@ -85,7 +85,7 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    *
    * @param immediately true-立即停止，false-下一条日志开始停止
    */
-  public void endMessagePrefix(boolean immediately) {
+  public synchronized void endMessagePrefix(boolean immediately) {
     messagePrefix = null;
     messagePrefixEnabled = !immediately;
     changeMessagePrefixAfter = !immediately;
@@ -204,7 +204,18 @@ public class LabzenLogger implements Logger, LoggingEventAware {
     }
 
     // 2. 追加格式化后的消息内容（处理{}占位符）
-    sb.append(MessageFormatter.arrayFormat(message, event.getArgumentArray()).getMessage());
+    /*
+    逻辑缺陷 — LabzenLoggingEvent.getMessage() 与 LabzenLogger.log() 双重格式化 🟡
+      Location: src/main/java/cn/labzen/logger/kernel/LabzenLoggingEvent.java#L102-L105 和 src/main/java/cn/labzen/logger/kernel/LabzenLogger.java#L207
+
+      Analysis: LabzenLoggingEvent.getMessage() 调用了 MessagePatternTileManager.transform() 处理 Tile 占位符；同时 LabzenLogger.mergeMarkersAndKeyValuePairs() 又调用了 MessageFormatter.arrayFormat() 处理 {} 占位符。当消息中同时存在 Tile 占位符（如 {name@number_0.00}）和 {} 时，两者可能对同一内容进行重复处理，导致输出格式错误。两个格式化路径的职责边界不清晰。
+
+      Fix Recommendation: 在 mergeMarkersAndKeyValuePairs() 中不再调用 MessageFormatter.arrayFormat()，因为 event.getMessage() 已经由 Tile 系统完成了占位符替换。或者明确约定 getMessage() 仅返回原始模板，所有格式化统一由 mergeMarkersAndKeyValuePairs() 完成，消除双重格式化路径。
+
+      todo 验证这个问题，并解决掉
+     */
+    Object[] args = event.getArgumentArray();
+    sb.append(MessageFormatter.arrayFormat(message, args != null ? args : new Object[0]).getMessage());
 
     // 3. 追加所有KeyValuePairs
     if (event.getKeyValuePairs() != null) {
@@ -251,7 +262,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void trace(Supplier<String> supplier) {
-    principal.trace(supplier.get());
+    if (principal.isTraceEnabled()) {
+      principal.trace(supplier.get());
+    }
   }
 
   @Override
@@ -300,7 +313,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void trace(Throwable t, Supplier<String> supplier) {
-    principal.trace(supplier.get(), t);
+    if (principal.isTraceEnabled()) {
+      principal.trace(supplier.get(), t);
+    }
   }
 
   /**
@@ -362,7 +377,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void debug(Supplier<String> supplier) {
-    principal.debug(supplier.get());
+    if (principal.isDebugEnabled()) {
+      principal.debug(supplier.get());
+    }
   }
 
   @Override
@@ -411,7 +428,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void debug(Throwable t, Supplier<String> supplier) {
-    principal.debug(supplier.get(), t);
+    if (principal.isDebugEnabled()) {
+      principal.debug(supplier.get(), t);
+    }
   }
 
   /**
@@ -473,7 +492,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void info(Supplier<String> supplier) {
-    principal.info(supplier.get());
+    if (principal.isInfoEnabled()) {
+      principal.info(supplier.get());
+    }
   }
 
   @Override
@@ -522,7 +543,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void info(Throwable t, Supplier<String> supplier) {
-    principal.info(supplier.get(), t);
+    if (principal.isInfoEnabled()) {
+      principal.info(supplier.get(), t);
+    }
   }
 
   /**
@@ -584,7 +607,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void warn(Supplier<String> supplier) {
-    principal.warn(supplier.get());
+    if (principal.isWarnEnabled()) {
+      principal.warn(supplier.get());
+    }
   }
 
   @Override
@@ -633,7 +658,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void warn(Throwable t, Supplier<String> supplier) {
-    principal.warn(supplier.get(), t);
+    if (principal.isWarnEnabled()) {
+      principal.warn(supplier.get(), t);
+    }
   }
 
   /**
@@ -695,7 +722,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void error(Supplier<String> supplier) {
-    principal.error(supplier.get());
+    if (principal.isErrorEnabled()) {
+      principal.error(supplier.get());
+    }
   }
 
   @Override
@@ -744,7 +773,9 @@ public class LabzenLogger implements Logger, LoggingEventAware {
    * @param supplier 获取日志内容函数
    */
   public void error(Throwable t, Supplier<String> supplier) {
-    principal.error(supplier.get(), t);
+    if (principal.isErrorEnabled()) {
+      principal.error(supplier.get(), t);
+    }
   }
 
   /**

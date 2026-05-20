@@ -31,6 +31,14 @@ public interface LoggerConfiguration {
   boolean printSystemInformation();
 
   /**
+   * 是否打印JVM启动参数，生产环境慎用
+   * <p>
+   * 该部分信息通过 System.out.println() 打印
+   */
+  @Item(path = "print-jvm-info", required = false, defaultValue = "false")
+  boolean printJVMArguments();
+
+  /**
    * 日志输出时，如果包含 marker 信息，在marker后添加的分隔符
    */
   @Item(path = "marker-tailed", required = false, defaultValue = "-")

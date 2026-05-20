@@ -68,6 +68,7 @@ public class DefaultTile extends AbstractTile<Object> implements HeadTile<Object
         return safeTake(list, position);
       }
       case Map<?, ?> map -> {
+        // todo 这里需要在日志中提示一下，使用 {} 默认位置占位符，并使用Map作为参数集合，需要保证是有序Map才行，Warning一下
         return safeTake(new ArrayList<>(map.values()), position);
       }
       case null, default -> {

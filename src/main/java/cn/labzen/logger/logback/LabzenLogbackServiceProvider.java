@@ -30,16 +30,15 @@ public class LabzenLogbackServiceProvider extends LogbackServiceProvider {
   private void enhancePatternLayout() {
     // 加入自定义 Conversion Word
     // 重新分配色彩的日志级别
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("showy", HighlighterConverter::new);
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("highlighter", HighlighterConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("lbz-showy", HighlighterConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("lbz-highlighter", HighlighterConverter::new);
     // 更短的logger类显示，暂时不建议使用
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("briefLogger", IdentifiableLoggerConverter::new);
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("brief", IdentifiableLoggerConverter::new);
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("bl", IdentifiableLoggerConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("lbz-brief", IdentifiableLoggerConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("lbz-identifiable", IdentifiableLoggerConverter::new);
     // 更直观的异常显示
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("thrown", IndentedThrowableProxyConverter::new);
+    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("lbz-thrown", IndentedThrowableProxyConverter::new);
     // todo 下面这两个可能有什么问题，还需要再验证，暂时先注掉
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newEx", IndentedThrowableProxyConverter::new);
-    PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newException", IndentedThrowableProxyConverter::new);
+    //PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newEx", IndentedThrowableProxyConverter::new);
+    //PatternLayout.DEFAULT_CONVERTER_SUPPLIER_MAP.put("newException", IndentedThrowableProxyConverter::new);
   }
 }

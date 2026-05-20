@@ -23,10 +23,10 @@ import org.springframework.util.ClassUtils;
 public class LoggerImplementor {
 
   /** Logback是否存在标志 */
-  private static boolean logbackPresent = false;
+  private static volatile boolean logbackPresent = false;
 
   /** Reload4j是否存在标志 */
-  private static boolean reload4jPresent = false;
+  private static volatile boolean reload4jPresent = false;
 
   /**
    * 私有构造方法，防止实例化

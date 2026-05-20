@@ -65,34 +65,59 @@ import java.util.function.Supplier;
  */
 public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
 
-  /** 日志级别是否启用 */
+  /**
+   * 日志级别是否启用
+   */
   private final boolean enabled;
 
-  /** 关联的LabzenLogger实例 */
+  /**
+   * 关联的LabzenLogger实例
+   */
   private final LabzenLogger labzenLogger;
 
-  /** 关联的日志事件对象 */
+  /**
+   * 关联的日志事件对象
+   */
   private final LabzenLoggingEvent labzenLoggingEvent;
 
-  /** 包含的Profile白名单 */
+  /**
+   * 包含的Profile白名单
+   */
   private Set<String> inProfiles;
 
-  /** 排除的Profile黑名单 */
+  /**
+   * 排除的Profile黑名单
+   */
   private Set<String> outProfiles;
 
-  /** 条件标志，false时不打印日志（除非force） */
+  /**
+   * 条件标志，false时不打印日志（除非force）
+   */
   private boolean conditional = true;
 
-  /** 强制打印标记 */
+  /**
+   * 延迟计算的条件提供者
+   */
+  private Supplier<Boolean> conditionalSupplier;
+
+  /**
+   * 强制打印标记
+   */
   private ForcedMarker forcedMarker;
 
-  /** 场景标记 */
+  /**
+   * 场景标记
+   */
   private SceneMarker sceneMarker;
 
-  /** 状态标记 */
+  /**
+   * 状态标记
+   */
   private StatusMarker statusMarker;
 
-  /** 标签标记 */
+  /**
+   * 标签标记
+   */
   private TagMarker tagMarker;
 
   /**
@@ -138,6 +163,7 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
    */
   public LabzenLoggingEventBuilder conditional(boolean value) {
     this.conditional = value;
+    this.conditionalSupplier = null;
     return this;
   }
 
@@ -148,13 +174,14 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
    * @return 当前Builder
    */
   public LabzenLoggingEventBuilder conditional(Supplier<Boolean> supplier) {
-    return conditional(supplier.get());
+    this.conditionalSupplier = supplier;
+    return this;
   }
 
   /**
    * 设置白名单Profile
    *
-   * <p>当Spring的active profiles中任意一个匹配时输出日志，大小写不敏感
+   * <p>当Spring的active profiles中任意一个匹配时输出日志，大小写敏感
    *
    * @param profiles Profile名称数组
    * @return 当前Builder
@@ -167,7 +194,7 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
   /**
    * 设置黑名单Profile
    *
-   * <p>当Spring的active profiles中所有都不匹配时输出日志，大小写不敏感
+   * <p>当Spring的active profiles中所有都不匹配时输出日志，大小写敏感
    *
    * @param profiles 排除的Profile名称数组
    * @return 当前Builder
@@ -400,7 +427,11 @@ public class LabzenLoggingEventBuilder extends DefaultLoggingEventBuilder {
       return false;
     }
 
-    if (!conditional) {
+    if (conditionalSupplier != null) {
+      if (!conditionalSupplier.get()) {
+        return false;
+      }
+    } else if (!conditional) {
       return false;
     }
 

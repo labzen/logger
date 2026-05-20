@@ -1,6 +1,8 @@
 package cn.labzen.logger.kernel;
 
+import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
+import org.slf4j.event.Level;
 import org.slf4j.spi.LoggingEventBuilder;
 
 import java.util.function.Supplier;
@@ -26,8 +28,13 @@ import java.util.function.Supplier;
  */
 public class LabzenNOPLoggingEventBuilder extends LabzenLoggingEventBuilder {
 
-  /** 单例实例，避免重复创建对象 */
-  static final LabzenNOPLoggingEventBuilder SINGLETON = new LabzenNOPLoggingEventBuilder();
+  /**
+   * 单例实例，避免重复创建对象
+   */
+  private static class Holder {
+
+    static final LabzenNOPLoggingEventBuilder INSTANCE = new LabzenNOPLoggingEventBuilder();
+  }
 
   /**
    * 私有构造方法，确保只能通过单例获取实例
@@ -35,7 +42,8 @@ public class LabzenNOPLoggingEventBuilder extends LabzenLoggingEventBuilder {
    * @throws IllegalStateException 如果传入非null参数
    */
   private LabzenNOPLoggingEventBuilder() {
-    super(null, null);
+    // NOP Builder 不应依赖父类的实际日志功能，直接使用 null-safe 的最小化初始化
+    super(new LabzenLogger(LoggerFactory.getLogger(LabzenNOPLoggingEventBuilder.class)), Level.TRACE);
   }
 
   /**
@@ -44,7 +52,7 @@ public class LabzenNOPLoggingEventBuilder extends LabzenLoggingEventBuilder {
    * @return 共享的NOP构建器实例
    */
   public static LabzenNOPLoggingEventBuilder singleton() {
-    return SINGLETON;
+    return Holder.INSTANCE;
   }
 
   /**

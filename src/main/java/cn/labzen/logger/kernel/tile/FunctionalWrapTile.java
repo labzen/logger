@@ -49,6 +49,9 @@ public class FunctionalWrapTile extends AbstractTile<String> {
    */
   @Override
   public String convert(Object value) {
+    if (value == null) {
+      return "";
+    }
     return edge.charAt(0) + value.toString() + edge.charAt(1);
   }
 

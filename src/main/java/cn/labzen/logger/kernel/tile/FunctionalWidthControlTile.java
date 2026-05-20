@@ -25,10 +25,14 @@ import java.util.Objects;
  */
 public class FunctionalWidthControlTile extends AbstractTile<String> {
 
-  /** 最小宽度，null表示不限制 */
+  /**
+   * 最小宽度，null表示不限制
+   */
   private final Integer min;
 
-  /** 最大宽度，null表示不限制 */
+  /**
+   * 最大宽度，null表示不限制
+   */
   private final Integer max;
 
   /**
@@ -61,7 +65,7 @@ public class FunctionalWidthControlTile extends AbstractTile<String> {
    */
   @Override
   public String convert(Object value) {
-    String string = value.toString();
+    String string = value == null ? "" : value.toString();
     int length = string.length();
 
     // 只有最大宽度限制

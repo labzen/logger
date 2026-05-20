@@ -1,7 +1,5 @@
 package cn.labzen.logger.spring;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class Profiles {
@@ -14,17 +12,16 @@ public final class Profiles {
   public static final String DEV_FULL = "development";
   public static final String PROD_FULL = "production";
 
-  private static final List<String> currentProfiles = new ArrayList<>();
+  private static volatile List<String> currentProfiles = List.of();
 
   private Profiles() {
   }
 
   public static List<String> currentProfiles() {
-    return Collections.unmodifiableList(currentProfiles);
+    return currentProfiles;
   }
 
   static void setCurrentProfiles(List<String> profiles) {
-    currentProfiles.clear();
-    currentProfiles.addAll(profiles);
+    currentProfiles = List.copyOf(profiles);
   }
 }

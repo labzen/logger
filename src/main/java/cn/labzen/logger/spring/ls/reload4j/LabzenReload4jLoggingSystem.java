@@ -117,9 +117,9 @@ public class LabzenReload4jLoggingSystem extends LabzenLoggingSystem {
     LoggerRepository loggerRepository = LogManager.getLoggerRepository();
     Logger logger;
     if (StringUtils.hasText(loggerName)) {
-      logger = loggerRepository.getRootLogger();
-    } else {
       logger = loggerRepository.getLogger(loggerName);
+    } else {
+      logger = loggerRepository.getRootLogger();
     }
     logger.setLevel(level);
   }

@@ -75,7 +75,7 @@ public class IdentifiableLoggerConverter extends LoggerConverter {
 
   @Override
   public String convert(ILoggingEvent event) {
-    return super.convert(event);
+    return logText(event);
   }
 
   private String logText(ILoggingEvent event) {

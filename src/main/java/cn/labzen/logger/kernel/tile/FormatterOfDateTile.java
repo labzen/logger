@@ -59,29 +59,29 @@ public class FormatterOfDateTile extends AbstractTile<String> {
    *
    * <p>处理规则：
    * <ul>
-   *   <li>null → "nil"</li>
+   *   <li>null → ""</li>
    *   <li>Long/Integer → 转为LocalDateTime后格式化</li>
    *   <li>Date → 转为LocalDateTime后格式化</li>
    *   <li>LocalDateTime/LocalDate/LocalTime → 直接格式化</li>
-   *   <li>其他类型 → "nil"</li>
+   *   <li>其他类型 → ""</li>
    * </ul>
    *
    * @param value 输入值
-   * @return 格式化后的字符串，null或不支持类型返回"nil"
+   * @return 格式化后的字符串，null或不支持类型返回 ""
    */
-  @SuppressWarnings("DataFlowIssue")
   @Override
   public String convert(Object value) {
     if (value == null) {
-      return "nil";
+      return "";
     } else if (value instanceof Long || value instanceof Integer) {
-      return LocalDateTime.ofInstant(Instant.ofEpochMilli((Long) value), ZONE).format(formatter);
+      long millis = ((Number) value).longValue();
+      return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZONE).format(formatter);
     } else if (value instanceof Date date) {
       return formatter.format(LocalDateTime.ofInstant(date.toInstant(), ZONE));
     } else if (value instanceof LocalDateTime || value instanceof LocalDate || value instanceof LocalTime) {
       return formatter.format((TemporalAccessor) value);
     }
-    return "nil";
+    return "";
   }
 
   @Override

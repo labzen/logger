@@ -30,7 +30,7 @@ import java.util.List;
 public class MarkerWrapper extends AbstractLimitedMarker {
 
   /** Marker后缀分隔符，延迟初始化 */
-  private static String tailed;
+  private static volatile String tailed;
 
   /** 强制打印标记 */
   private final ForcedMarker forced;

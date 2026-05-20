@@ -12,6 +12,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MetaPrinter {
 
@@ -34,6 +35,11 @@ public class MetaPrinter {
     // 打印系统硬件信息
     if (configuration.printSystemInformation()) {
       printSystemInformation();
+    }
+
+    // 打印JVM启动信息
+    if (configuration.printJVMArguments()) {
+      printJVMInformation();
     }
   }
 
@@ -105,12 +111,19 @@ public class MetaPrinter {
     for (Information info : infos) {
       logger.atInfo().scene(LABZEN_TEXT).log("  component {}:{} loaded", info.title(), info.version());
     }
+  }
 
+  private static void printJVMInformation() {
     RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-    logger.atInfo().scene(LABZEN_TEXT).log("JVM启动输入参数：{}", String.join(" ", runtimeMXBean.getInputArguments()));
     logger.atInfo()
           .scene(LABZEN_TEXT)
           .log("JVM名称：{}, version {}", runtimeMXBean.getName(), runtimeMXBean.getSpecVersion());
+    String regex = "(?i)(password|passwd|secret|key|token|credential)\\s*=\\s*\\S+";
+    String sanitizedArgs = runtimeMXBean.getInputArguments()
+                                        .stream()
+                                        .map(arg -> arg.replaceAll(regex, "$1=****"))
+                                        .collect(Collectors.joining(" "));
+    logger.atInfo().scene(LABZEN_TEXT).log("JVM启动输入参数：{}", sanitizedArgs);
   }
 
   private static void printSystemInformation() {

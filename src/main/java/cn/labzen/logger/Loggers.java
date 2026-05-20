@@ -39,10 +39,8 @@ public final class Loggers {
   public static void enhance() {
     // 针对 SLF4J 的 2.0.9 以后的版本，提供了 slf4j.provider 系统属性：显式指定provider类，这绕过了查找提供者的服务加载器机制，并可缩短SLF4J的初始化时间。
     // 提供定制的 provider 来增强 Logback 或 Reload4j 的功能
-    System.setProperty(
-        LoggerFactory.PROVIDER_PROPERTY_KEY,
-        "cn.labzen.logger.kernel.provider.LabzenLoggerServiceProvider"
-    );
+    System.setProperty(LoggerFactory.PROVIDER_PROPERTY_KEY,
+        "cn.labzen.logger.kernel.provider.LabzenLoggerServiceProvider");
   }
 
   /**
@@ -52,7 +50,11 @@ public final class Loggers {
    * @return LabzenLogger增强版日志器
    */
   public static LabzenLogger getLogger(String name) {
-    return (LabzenLogger) LoggerFactory.getLogger(name);
+    Logger logger = LoggerFactory.getLogger(name);
+    if (logger instanceof LabzenLogger labzenLogger) {
+      return labzenLogger;
+    }
+    return new LabzenLogger(logger);
   }
 
   /**
@@ -64,6 +66,10 @@ public final class Loggers {
    * @return LabzenLogger增强版日志器
    */
   public static LabzenLogger getLogger(Class<?> clazz) {
-    return (LabzenLogger) LoggerFactory.getLogger(clazz);
+    Logger logger = LoggerFactory.getLogger(clazz);
+    if (logger instanceof LabzenLogger labzenLogger) {
+      return labzenLogger;
+    }
+    return new LabzenLogger(logger);
   }
 }

@@ -29,10 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FormatterOfNumberTile extends AbstractTile<String> {
 
-  private static final Map<String, DecimalFormat> FORMATTER_CACHE = new ConcurrentHashMap<>();
+  private static final Map<String, ThreadLocal<NumberFormat>> FORMATTER_CACHE = new ConcurrentHashMap<>();
 
-  /** 数字格式化器 */
-  private final NumberFormat formatter;
+  /**
+   * 数字格式化 pattern
+   */
+  private final String pattern;
 
   /**
    * 构造方法
@@ -40,7 +42,8 @@ public class FormatterOfNumberTile extends AbstractTile<String> {
    * @param pattern 格式化模式，如"0.00"、".##"等
    */
   public FormatterOfNumberTile(String pattern) {
-    formatter = FORMATTER_CACHE.computeIfAbsent(pattern, DecimalFormat::new);
+    this.pattern = pattern;
+    FORMATTER_CACHE.computeIfAbsent(pattern, p -> ThreadLocal.withInitial(() -> new DecimalFormat(p)));
   }
 
   /**
@@ -58,7 +61,10 @@ public class FormatterOfNumberTile extends AbstractTile<String> {
   @Override
   public String convert(Object value) {
     if (value instanceof Number) {
-      return formatter.format(value);
+      return FORMATTER_CACHE.get(pattern).get().format(value);
+    }
+    if (value == null) {
+      return "";
     }
     return value.toString();
   }
@@ -69,11 +75,11 @@ public class FormatterOfNumberTile extends AbstractTile<String> {
       return false;
     }
     FormatterOfNumberTile that = (FormatterOfNumberTile) o;
-    return Objects.equals(formatter, that.formatter);
+    return Objects.equals(pattern, that.pattern);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(formatter);
+    return Objects.hashCode(pattern);
   }
 }
